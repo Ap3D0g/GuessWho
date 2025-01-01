@@ -3,6 +3,7 @@ import java.util.Arrays;
 
 public class Main {
     public static void main (String[] args) {
+
         ArrayList<Character> characters = new ArrayList<>();
 
         characters.add(new Character("Amy", "Female", "black", "brown", true, false, false, false, false));
@@ -31,6 +32,6 @@ public class Main {
         characters.add(new Character("Sam", "male", "black", "green", false, true, false, false, false));
 
         //Launch the GUI 
-        new GUI(); // Start with the welcome page
+        new GUI(characters); // Start with the welcome page
     }
 }

@@ -13,7 +13,7 @@ public class AI {
     }
 
     // Method to randomly select a question and determine the related attribute
-    public String selectRandomQuestion() {
+    public String selectRandomFirstQuestion() {
         // List of possible questions
         String[] questions = {
                 "Is your character male?",
@@ -59,6 +59,6 @@ public class AI {
         } 
 
         // Return both question and attribute as an array
-        return attribute;
+        return question;
     }
 }

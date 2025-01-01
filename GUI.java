@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import javax.swing.border.EmptyBorder;
 
 public class GUI {
@@ -14,13 +16,30 @@ public class GUI {
             "Emma", "Rachel", "Ben", "Eric", "Farah", "Sam"
     };
 
+    private ArrayList<Character> characters;
+    private Gameboard gameboard;
+    private AI aiInstance = new AI(); // Create an AI object
+    private Character ai;
     private String selectedCharacter; // Stores player's selected character
     private JLabel selectedCharacterLabel; // Displays selected character image
     private boolean characterSelected = false; // Tracks whether a character has been selected
-    private String selectedQuestion;  // Stores the selected question
+    private String question;
+    private String getAttributeFromQuestion;  // Stores the selected attribute from question
+    private JFrame boardFrame;
 
     // Constructor - Welcome Page
-    public GUI() {
+    public GUI(ArrayList<Character> characters) {
+        this.characters = characters;
+        gameboard = new Gameboard();
+
+        welcomeScreen();
+    }
+
+    private void welcomeScreen() {
+        // AI Selects a Character
+        ai = aiInstance.aiCharacter(characters); // AI randomly selects a character
+        //System.out.println("AI selected: " + ai.getName()); // Debugging output
+
         // Create the Welcome Frame
         JFrame frame = new JFrame("Guess Who - Welcome");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,7 +96,7 @@ public class GUI {
     // Gameboard Window
     private void openGameBoard() {
         // Create the Board Frame
-        JFrame boardFrame = new JFrame("Guess Who - Gameboard");
+        boardFrame = new JFrame("Guess Who - Gameboard");
         boardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         boardFrame.setSize(1200, 800); // Enlarged window size
         boardFrame.setLayout(new BorderLayout());
@@ -155,6 +174,8 @@ public class GUI {
                             "Character Selected",
                             JOptionPane.INFORMATION_MESSAGE);
 
+                    aiTurn();
+                     
                     // Disable all buttons after selection
                     for (int i = 0; i < gridPanel.getComponentCount(); i++) {
                         JButton button = (JButton) gridPanel.getComponent(i); // Directly cast to JButton
@@ -166,7 +187,7 @@ public class GUI {
                     JOptionPane.showMessageDialog(boardFrame, // Next turn popup
                             "It's your turn! Choose a question from the dropdown to ask.",
                             "Your Turn",
-                            JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.INFORMATION_MESSAGE); 
                 }
             });
         }
@@ -201,19 +222,23 @@ public class GUI {
         bottomPanel.add(questionDropdown);
         bottomPanel.add(askButton);
 
-        // Ask button action
+        boardFrame.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Player turn asking a question
         askButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                selectedQuestion = (String) questionDropdown.getSelectedItem(); // Store selected question
+                question = (String) questionDropdown.getSelectedItem(); // Store selected question
                 JOptionPane.showMessageDialog(boardFrame,
-                        "You asked: " + selectedQuestion,
+                        "You asked: " + question,
                         "Question Asked",
                         JOptionPane.INFORMATION_MESSAGE);
+                
+                // Switch to AI's turn
+                gameboard.switchTurn();
+                aiTurn();
             }
         });
-
-        boardFrame.add(bottomPanel, BorderLayout.SOUTH);
 
         // Display Board Frame
         boardFrame.setVisible(true);
@@ -224,5 +249,46 @@ public class GUI {
                 "Character Selection",
                 JOptionPane.INFORMATION_MESSAGE);
 
+    }
+
+    // AI Turn
+    private void aiTurn() {
+        if (!gameboard.isPlayerTurn()) { // AI's turn
+            // AI selects a question
+            String aiQuestion = aiInstance.selectRandomFirstQuestion();
+
+            // Keep showing the dialog until the correct answer is selected
+            boolean validAnswer = false; // Tracks whether the answer is valid
+
+            while (!validAnswer) { // Loop until valid input
+                // Show a dialog with the AI's question and Yes/No buttons
+                int answer = JOptionPane.showOptionDialog(
+                        boardFrame,
+                        "AI asks: " + aiQuestion, // AI's question
+                        "AI's Turn", // Title
+                        JOptionPane.YES_NO_OPTION, // Button options
+                        JOptionPane.QUESTION_MESSAGE, // Icon type
+                        null, // Default icon
+                        null, // Default Button labels
+                        null // Default button
+                );
+
+                // Check if the player's response is valid
+                validAnswer = isValidAnswer(aiQuestion, answer);
+
+                // If invalid, stay in the loop (dialog won't close until valid)
+            }
+
+            // Once a valid answer is selected, switch back to the player's turn
+            gameboard.switchTurn();
+        }
+}
+
+    // Validate AI Question
+    private boolean isValidAnswer(String question, int answer) {
+        Character playerCharacter = Gameboard.chosenCharacter(characters, selectedCharacter);
+        String value = Gameboard.getAttributeFromQuestion(question, playerCharacter);
+        boolean expectedAnswer = Boolean.parseBoolean(value);
+        return (answer == JOptionPane.YES_OPTION) == expectedAnswer;
     }
 }
