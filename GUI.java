@@ -30,6 +30,9 @@ public class GUI {
     //private String getAttributeFromQuestion;  // Stores the selected attribute from question
     private JFrame boardFrame;
     private JComboBox<Question> questionDropdown; //comboBox that stores all the question player can ask 
+    private JPanel gridPanel; // Gameboard grid panel
+    private ArrayList<String> eliminatedCharacters = new ArrayList<>(); // Stores eliminated characters
+    private JButton askButton;
 
     // Constructor - Welcome Page
     public GUI(ArrayList<Character> characters, ArrayList<Question> questions) {
@@ -115,7 +118,7 @@ public class GUI {
         boardFrame.add(title, BorderLayout.NORTH);
 
         // Gameboard Panel - 6x4 Grid (6 columns, 4 rows)
-        JPanel gridPanel = new JPanel();
+        gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(4, 6, 5, 5)); // 4 rows, 6 columns
 
         // Side Panel for displaying the selected character
@@ -170,6 +173,7 @@ public class GUI {
                     // Save the selected character
                     selectedCharacter = name;
                     characterSelected = true; // Mark a character as selected
+                    askButton.setEnabled(true); // Enable the Ask button
 
                     // Display the selected character's image on the right panel
                     ImageIcon selectedIcon = new ImageIcon("Characters/" + name + ".png");
@@ -208,7 +212,8 @@ public class GUI {
         JLabel questionLabel = new JLabel("Ask a Question:");
         questionDropdown = new JComboBox<>(questions.toArray(new Question[0]));
         
-        JButton askButton = new JButton("Ask");
+        askButton = new JButton("Ask");
+        askButton.setEnabled(false); // Disable initially
 
         bottomPanel.add(questionLabel);
         bottomPanel.add(questionDropdown);
@@ -225,7 +230,7 @@ public class GUI {
                         "You asked: " + question.getQuestion(),
                         "Question Asked",
                         JOptionPane.INFORMATION_MESSAGE);
-            
+               
                 //Remove Question from Dropdown and ArrayList**
                 questions.remove(question);
                 updateDropdown();
@@ -234,6 +239,28 @@ public class GUI {
 
                 // Remove characters based on question match
                 playerCharacters = Gameboard.removeCharacter(playerCharacters, question.getAttribute(), question.getValue(), match);
+
+                // Track eliminated characters using a counted loop
+                for (int i = 0; i < characters.size(); i++) { // Loop through all characters
+                    Character c = characters.get(i); // Get the character by index
+
+                    // If the character is NOT in playerCharacters, mark as eliminated
+                    boolean eliminated = true;
+                    for (int j = 0; j < playerCharacters.size(); j++) {
+                        if (c.equals(playerCharacters.get(j))) { // Check if character still exists
+                            eliminated = false; // It's not eliminated
+                            break; // Exit the inner loop early
+                        }
+                    }
+
+                    // Add eliminated characters to the list
+                    if (eliminated && !eliminatedCharacters.contains(c.getName())) { // Avoid duplicates
+                        eliminatedCharacters.add(c.getName()); // Add eliminated character
+                    }
+                }
+
+                // Update eliminated images
+                updateEliminatedCharacterButtons();
 
                 // Print remaining player characters
                 System.out.println("Remaining Player Characters:");
@@ -369,6 +396,21 @@ public class GUI {
         // Repopulate with remaining questions  
         for (int i = 0; i < questions.size(); i++) { 
             questionDropdown.addItem(questions.get(i)); // Add each question to dropdown
+        }
+    }
+
+    // Updates eliminated character buttons
+    private void updateEliminatedCharacterButtons() {
+        for (int i = 0; i < characterNames.length; i++) {
+            String name = characterNames[i];
+            if (eliminatedCharacters.contains(name)) {
+                JButton charButton = (JButton) gridPanel.getComponent(i);
+                ImageIcon icon = new ImageIcon("Remove_Characters/" + name + "X.png");
+                Image img = icon.getImage().getScaledInstance(120, 150, Image.SCALE_SMOOTH);
+                charButton.setIcon(new ImageIcon(img));
+                charButton.setDisabledIcon(new ImageIcon(img)); // Ensure button remains disabled
+                charButton.setEnabled(false);
+            }
         }
     }
 }
