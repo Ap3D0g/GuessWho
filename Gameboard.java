@@ -62,10 +62,10 @@ public class Gameboard {
             }
         }
         return null; // Return null if no match is found
-    }
+    } 
 
-    // Determine the attribute based on the question
-    public static String getAttributeFromQuestion(String question, Character character) {
+    // Determine the specific value of attribute based on the question
+    public static String getValueFromQuestion(String question, Character character) {
         if (question.contains("male") || question.contains("female")) { // Gender
             return character.getGender(); // Return gender directly
         } else if (question.contains("hair")) { // Hair color
@@ -86,9 +86,9 @@ public class Gameboard {
             return ""; // Return empty if the attribute doesn't match
         }
     }
-    /* 
+     
     // Method to get attribute from question selected 
-    public static String selectedQuestion(String question) {
+    public static String getAttributeFromQuestion(String question) {
         String selectedAttribute = "";
 
         //store attribute from question 
@@ -111,7 +111,7 @@ public class Gameboard {
         }
 
         return selectedAttribute;
-    } */
+    } 
 
     //remove characters depending on the question asked and the characteristics of character chosen 
     public static ArrayList<Character> removeCharacter(ArrayList<Character> characters, String attribute, String value, boolean matches) {
@@ -144,7 +144,16 @@ public class Gameboard {
     
             // Remove characters that don't meet the match condition
             if ((matches && !match) || (!matches && match)) {
+                System.out.println("-------------------------------------");
+                System.out.println("Removing Character In Progress");
+                System.out.println("Character to remove name: " + c.getName());
+                System.out.println("Character to remove eye color: " + c.getEyeColour());
+                System.out.println("attribute parameter is: " + attribute);
+                System.out.println("value parameter is: " + value);
+                System.out.println("-------------------------------------");
+
                 toRemove.add(c); // Add to removal list
+                // System.out.println("Removed " + c.getName());
             }
         }
     

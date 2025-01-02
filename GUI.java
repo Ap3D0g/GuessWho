@@ -20,25 +20,29 @@ public class GUI {
     private Gameboard gameboard;
     private AI aiInstance = new AI(); // Create an AI object
     private Character ai;
+    private ArrayList<Character> playerCharacters; // Player's active characters
+    private ArrayList<Character> aiCharacters; // AI's active characters 
     private String selectedCharacter; // Stores player's selected character
     private JLabel selectedCharacterLabel; // Displays selected character image
     private boolean characterSelected = false; // Tracks whether a character has been selected
     private String question;
-    private String getAttributeFromQuestion;  // Stores the selected attribute from question
+    //private String getAttributeFromQuestion;  // Stores the selected attribute from question
     private JFrame boardFrame;
 
     // Constructor - Welcome Page
     public GUI(ArrayList<Character> characters) {
         this.characters = characters;
         gameboard = new Gameboard();
-
+        
         welcomeScreen();
     }
 
     private void welcomeScreen() {
         // AI Selects a Character
         ai = aiInstance.aiCharacter(characters); // AI randomly selects a character
-        //System.out.println("AI selected: " + ai.getName()); // Debugging output
+        System.out.println("AI selected: " + ai.getName()); // Debugging output
+        playerCharacters = new ArrayList<>(characters); // Initialize player's character list
+        aiCharacters = new ArrayList<>(characters);  // Initialize AI's character list 
 
         // Create the Welcome Frame
         JFrame frame = new JFrame("Guess Who - Welcome");
@@ -233,7 +237,7 @@ public class GUI {
                         "You asked: " + question,
                         "Question Asked",
                         JOptionPane.INFORMATION_MESSAGE);
-                
+
                 // Switch to AI's turn
                 gameboard.switchTurn();
                 aiTurn();
@@ -259,10 +263,10 @@ public class GUI {
 
             // Keep showing the dialog until the correct answer is selected
             boolean validAnswer = false; // Tracks whether the answer is valid
-
+            int answer = 0; 
             while (!validAnswer) { // Loop until valid input
                 // Show a dialog with the AI's question and Yes/No buttons
-                int answer = JOptionPane.showOptionDialog(
+                answer = JOptionPane.showOptionDialog(
                         boardFrame,
                         "AI asks: " + aiQuestion, // AI's question
                         "AI's Turn", // Title
@@ -279,16 +283,33 @@ public class GUI {
                 // If invalid, stay in the loop (dialog won't close until valid)
             }
 
+            // Extract the AI's question attribute and value
+            String aiAttribute = Gameboard.getAttributeFromQuestion(aiQuestion);
+            Character aiGuessCharacter = Gameboard.chosenCharacter(characters, selectedCharacter);
+            String aiValue = Gameboard.getValueFromQuestion(aiQuestion, aiGuessCharacter);
+
+            // Compare the AI's value to the selected character's value using the same method
+            String actualValue = Gameboard.getValueFromQuestion(aiQuestion, aiGuessCharacter); // AI's actual character value
+
+            // Check if the values match
+            boolean match = aiValue.equalsIgnoreCase(actualValue); // Compare strings (case-insensitive)
+
+            // Remove characters based on the comparison result
+            System.out.println(aiAttribute + " " + aiValue + " " + (answer != 0 && validAnswer));
+            aiCharacters = Gameboard.removeCharacter(aiCharacters, aiAttribute, aiValue, (answer != 0 && validAnswer));
+            // aiCharacters = Gameboard.removeCharacter(aiCharacters, "eye", "green", false);
+
+
             // Once a valid answer is selected, switch back to the player's turn
             gameboard.switchTurn();
         }
-}
-
+    }
+    
     // Validate AI Question
     private boolean isValidAnswer(String question, int answer) {
         Character playerCharacter = Gameboard.chosenCharacter(characters, selectedCharacter);
-        String value = Gameboard.getAttributeFromQuestion(question, playerCharacter);
+        String value = Gameboard.getValueFromQuestion(question, playerCharacter);
         boolean expectedAnswer = Boolean.parseBoolean(value);
         return (answer == JOptionPane.YES_OPTION) == expectedAnswer;
-    }
+    }   
 }

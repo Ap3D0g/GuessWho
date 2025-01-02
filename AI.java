@@ -34,31 +34,9 @@ public class AI {
                 "Does your character have a mustache?"
         };
 
-        // Randomly select a question
-        int index = random.nextInt(questions.length);
-        String question = questions[index]; // Selected question
-        String attribute = ""; // Attribute based on the question
-
-        // Determine the attribute
-        if (question.contains("male") || question.contains("female")) {
-            attribute = "gender";
-        } else if (question.contains("hair")) {
-            attribute = "hair";
-        } else if (question.contains("eye")) {
-            attribute = "eye";
-        } else if (question.contains("glasses")) {
-            attribute = "glasses";
-        } else if (question.contains("hat")) {
-            attribute = "hat";
-        } else if (question.contains("jewelry")) {
-            attribute = "jewelry";
-        } else if (question.contains("beard")) {
-            attribute = "beard";
-        } else if (question.contains("mustache")) {
-            attribute = "mustache";
-        } 
-
-        // Return both question and attribute as an array
-        return question;
+        
+        // Randomly select and return a question
+        return questions[random.nextInt(questions.length)]; // Return the question
+        
     }
 }
