@@ -29,6 +29,7 @@ public class GUI {
     private Question question; // Stores the selected question that the player asks
     //private String getAttributeFromQuestion;  // Stores the selected attribute from question
     private JFrame boardFrame;
+    private JComboBox<Question> questionDropdown; //comboBox that stores all the question player can ask 
 
     // Constructor - Welcome Page
     public GUI(ArrayList<Character> characters, ArrayList<Question> questions) {
@@ -205,7 +206,7 @@ public class GUI {
         // Dropdown for Questions
         JPanel bottomPanel = new JPanel();
         JLabel questionLabel = new JLabel("Ask a Question:");
-        JComboBox<Question> questionDropdown = new JComboBox<>(questions.toArray(new Question[0]));
+        questionDropdown = new JComboBox<>(questions.toArray(new Question[0]));
         
         JButton askButton = new JButton("Ask");
 
@@ -224,6 +225,10 @@ public class GUI {
                         "You asked: " + question.getQuestion(),
                         "Question Asked",
                         JOptionPane.INFORMATION_MESSAGE);
+               
+                //Remove Question from Dropdown and ArrayList**
+                questions.remove(question);
+                updateDropdown();
 
                 boolean match = compareWithAICharacter(question); // Compare player's question with AI's character
 
@@ -234,7 +239,14 @@ public class GUI {
                 System.out.println("Remaining Player Characters:");
                 for (int i = 0; i < playerCharacters.size(); i++) { 
                     System.out.println(playerCharacters.get(i).getName());
-                        }
+                }
+
+                // Check Win Condition for Player
+                if (gameboard.checkWinCondition(playerCharacters)) { 
+                    gameboard.endGame("Player"); // Player wins
+                    return; // Stop further execution
+                }
+                
                 // Switch to AI's turn
                 gameboard.switchTurn();
                 aiTurn();
@@ -256,7 +268,7 @@ public class GUI {
     private void aiTurn() {
         if (!gameboard.isPlayerTurn()) { // AI's turn
             // AI selects a question
-            Question aiQuestion = aiInstance.selectRandomFirstQuestion();
+            Question aiQuestion = aiInstance.selectFirstQuestion();
 
             // Keep showing the dialog until the correct answer is selected
             boolean validAnswer = false; // Tracks whether the answer is valid
@@ -290,6 +302,12 @@ public class GUI {
             for (int i = 0; i < aiCharacters.size(); i++) { 
                 Character character = aiCharacters.get(i); 
                 System.out.println(character.getName());   
+            }
+
+            // Check win condition for AI
+            if (gameboard.checkWinCondition(aiCharacters)) { 
+                gameboard.endGame("AI"); // AI wins
+                return; // Stop further execution
             }
 
             // Once a valid answer is selected, switch back to the player's turn
@@ -343,4 +361,14 @@ public class GUI {
 
         return false;
     }   
+
+    // Remove questions player already asked in dropdown 
+    private void updateDropdown() {
+        questionDropdown.removeAllItems(); // Clear dropdown
+    
+        // Repopulate with remaining questions  
+        for (int i = 0; i < questions.size(); i++) { 
+            questionDropdown.addItem(questions.get(i)); // Add each question to dropdown
+        }
+    }
 }

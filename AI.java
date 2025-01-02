@@ -20,7 +20,7 @@ public class AI {
     }
 
     // Method to randomly select a question and determine the related attribute
-    public Question selectRandomFirstQuestion() {
+    public Question selectFirstQuestion() {
         int index = random.nextInt(questions.size()); // Pick a random index
         return questions.get(index); // Return the question
         
