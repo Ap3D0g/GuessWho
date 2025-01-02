@@ -30,7 +30,27 @@ public class Main {
         characters.add(new Character("Eric", "male", "blue", "blue", false, false, false, false, false));
         characters.add(new Character("Farah", "female", "black", "blue", false, false, false, false, false));
         characters.add(new Character("Sam", "male", "black", "green", false, true, false, false, false));
-        
-        new GUI(characters);
+
+        // Initialize Questions
+        ArrayList<Question> questions = new ArrayList<>();
+        questions.add(new Question("Is your character male?", "gender", "male"));
+        questions.add(new Question("Is your character female?", "gender", "female"));
+        questions.add(new Question("Does your character have black hair?", "hair", "black"));
+        questions.add(new Question("Does your character have blonde hair?", "hair", "blonde"));
+        questions.add(new Question("Does your character have white hair?", "hair", "white"));
+        questions.add(new Question("Does your character have ginger hair?", "hair", "ginger"));
+        questions.add(new Question("Does your character have blue hair?", "hair", "blue"));
+        questions.add(new Question("Does your character have brown hair?", "hair", "brown"));
+        questions.add(new Question("Does your character have brown eyes?", "eye", "brown"));
+        questions.add(new Question("Does your character have blue eyes?", "eye", "blue"));
+        questions.add(new Question("Does your character have green eyes?", "eye", "green"));
+        questions.add(new Question("Does your character wear glasses?", "glasses", ""));
+        questions.add(new Question("Is your character wearing a hat?", "hat", ""));
+        questions.add(new Question("Is your character wearing jewelry?", "jewelry", ""));
+        questions.add(new Question("Does your character have a beard?", "beard", ""));
+        questions.add(new Question("Does your character have a mustache?", "mustache", ""));
+
+        // Pass characters and questions to GUI
+        new GUI(characters, questions); 
     }
 }

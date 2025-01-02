@@ -64,55 +64,6 @@ public class Gameboard {
         return null; // Return null if no match is found
     } 
 
-    // Determine the specific value of attribute based on the question
-    public static String getValueFromQuestion(String question, Character character) {
-        if (question.contains("male") || question.contains("female")) { // Gender
-            return character.getGender(); // Return gender directly
-        } else if (question.contains("hair")) { // Hair color
-            return character.getHairColour();
-        } else if (question.contains("eye")) { // Eye color
-            return character.getEyeColour();
-        } else if (question.contains("glasses")) { // Glasses (boolean)
-            return String.valueOf(character.hasGlasses());
-        } else if (question.contains("hat")) { // Hat (boolean)
-            return String.valueOf(character.hasHat());
-        } else if (question.contains("jewelry")) { // Jewelry (boolean)
-            return String.valueOf(character.hasJewelry());
-        } else if (question.contains("beard")) { // Beard (boolean)
-            return String.valueOf(character.hasBeard());
-        } else if (question.contains("mustache")) { // Mustache (boolean)
-            return String.valueOf(character.hasMustache());
-        } else {
-            return ""; // Return empty if the attribute doesn't match
-        }
-    }
-     
-    // Method to get attribute from question selected 
-    public static String getAttributeFromQuestion(String question) {
-        String selectedAttribute = "";
-
-        //store attribute from question 
-        if (question.contains("male") || question.contains("female")) {
-            selectedAttribute = "gender"; // Attribute is gender
-        } else if (question.contains("hair")) {
-            selectedAttribute = "hair"; // Attribute is hair
-        } else if (question.contains("eye")) {
-            selectedAttribute = "eye"; // Attribute is eye color
-        } else if (question.contains("glasses")) {
-            selectedAttribute = "glasses"; // Attribute is glasses
-        } else if (question.contains("hat")) {
-            selectedAttribute = "hat"; // Attribute is hat
-        } else if (question.contains("jewelry")) {
-            selectedAttribute = "jewelry"; // Attribute is jewelry
-        } else if (question.contains("beard")) {
-            selectedAttribute = "beard"; // Attribute is beard
-        } else if (question.contains("mustache")) {
-            selectedAttribute = "mustache"; // Attribute is mustache
-        }
-
-        return selectedAttribute;
-    } 
-
     //remove characters depending on the question asked and the characteristics of character chosen 
     public static ArrayList<Character> removeCharacter(ArrayList<Character> characters, String attribute, String value, boolean matches) {
         // Create a temporary list to store characters to remove
@@ -131,26 +82,19 @@ public class Gameboard {
             } else if (attribute.equalsIgnoreCase("eye")) {
                 match = c.getEyeColour().equalsIgnoreCase(value);
             } else if (attribute.equalsIgnoreCase("glasses")) {
-                match = c.hasGlasses() == Boolean.parseBoolean(value);
+                match = c.hasGlasses();
             } else if (attribute.equalsIgnoreCase("hat")) {
-                match = c.hasHat() == Boolean.parseBoolean(value);
+                match = c.hasHat();
             } else if (attribute.equalsIgnoreCase("jewelry")) {
-                match = c.hasJewelry() == Boolean.parseBoolean(value);
+                match = c.hasJewelry();
             } else if (attribute.equalsIgnoreCase("beard")) {
-                match = c.hasBeard() == Boolean.parseBoolean(value);
+                match = c.hasBeard();
             } else if (attribute.equalsIgnoreCase("mustache")) {
-                match = c.hasMustache() == Boolean.parseBoolean(value);
+                match = c.hasMustache();
             }
     
             // Remove characters that don't meet the match condition
             if ((matches && !match) || (!matches && match)) {
-                System.out.println("-------------------------------------");
-                System.out.println("Removing Character In Progress");
-                System.out.println("Character to remove name: " + c.getName());
-                System.out.println("Character to remove eye color: " + c.getEyeColour());
-                System.out.println("attribute parameter is: " + attribute);
-                System.out.println("value parameter is: " + value);
-                System.out.println("-------------------------------------");
 
                 toRemove.add(c); // Add to removal list
                 // System.out.println("Removed " + c.getName());

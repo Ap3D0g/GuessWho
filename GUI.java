@@ -17,21 +17,24 @@ public class GUI {
     };
 
     private ArrayList<Character> characters;
+    private ArrayList<Question> questions;
     private Gameboard gameboard;
-    private AI aiInstance = new AI(); // Create an AI object
+    private AI aiInstance; // Create an AI object
     private Character ai;
     private ArrayList<Character> playerCharacters; // Player's active characters
     private ArrayList<Character> aiCharacters; // AI's active characters 
     private String selectedCharacter; // Stores player's selected character
     private JLabel selectedCharacterLabel; // Displays selected character image
     private boolean characterSelected = false; // Tracks whether a character has been selected
-    private String question;
+    private Question question; // Stores the selected question that the player asks
     //private String getAttributeFromQuestion;  // Stores the selected attribute from question
     private JFrame boardFrame;
 
     // Constructor - Welcome Page
-    public GUI(ArrayList<Character> characters) {
+    public GUI(ArrayList<Character> characters, ArrayList<Question> questions) {
         this.characters = characters;
+        this.questions = questions;
+        this.aiInstance = new AI(questions); // Pass questions to AI instance
         gameboard = new Gameboard();
         
         welcomeScreen();
@@ -202,24 +205,46 @@ public class GUI {
         // Dropdown for Questions
         JPanel bottomPanel = new JPanel();
         JLabel questionLabel = new JLabel("Ask a Question:");
-        JComboBox<String> questionDropdown = new JComboBox<>(new String[]{
-                "Is your character male?",
-                "Is your character female?",
-                "Does your character have black hair?",
-                "Does your character have blonde hair?",
-                "Does your character have white hair?",
-                "Does your character have ginger hair?",
-                "Does your character have blue hair?",
-                "Does your character have brown hair?",
-                "Does your character have brown eyes?",
-                "Does your character have blue eyes?",
-                "Does your character have green eyes?",
-                "Does your character wear glasses?",
-                "Is your character wearing a hat?",
-                "Is your character wearing jewelry?",
-                "Does your character have a beard?",
-                "Does your character have a mustache?"
-        });
+        JComboBox<Question> questionDropdown = new JComboBox<>(questions.toArray(new Question[0]));
+        /* 
+        // Create Question objects for each question
+        Question isCharacterMale = new Question("Is your character male?", "gender", "male");
+        Question isCharacterFemale = new Question("Is your character female?", "gender", "female");
+        Question hasBlackHair = new Question("Does your character have black hair?", "hair", "black");
+        Question hasBlondeHair = new Question("Does your character have blonde hair?", "hair", "blonde");
+        Question hasWhiteHair = new Question("Does your character have white hair?", "hair", "white");
+        Question hasGingerHair = new Question("Does your character have ginger hair?", "hair", "ginger");
+        Question hasBlueHair = new Question("Does your character have blue hair?", "hair", "blue");
+        Question hasBrownHair = new Question("Does your character have brown hair?", "hair", "brown");
+        Question hasBrownEyes = new Question("Does your character have brown eyes?", "eye", "brown");
+        Question hasBlueEyes = new Question("Does your character have blue eyes?", "eye", "blue");
+        Question hasGreenEyes = new Question("Does your character have green eyes?", "eye", "green");
+        Question wearsGlasses = new Question("Does your character wear glasses?", "glasses", "");
+        Question wearsHat = new Question("Is your character wearing a hat?", "hat", "");
+        Question wearsJewelry = new Question("Is your character wearing jewelry?", "jewelry", "");
+        Question hasBeard = new Question("Does your character have a beard?", "beard", "");
+        Question hasMustache = new Question("Does your character have a mustache?", "mustache", "");
+
+        // Add questions to the dropdown
+        JComboBox<Question> questionDropdown = new JComboBox<>(new Question[]{
+            isCharacterMale,
+            isCharacterFemale,
+            hasBlackHair,
+            hasBlondeHair,
+            hasWhiteHair,
+            hasGingerHair,
+            hasBlueHair,
+            hasBrownHair,
+            hasBrownEyes,
+            hasBlueEyes,
+            hasGreenEyes,
+            wearsGlasses,
+            wearsHat,
+            wearsJewelry,
+            hasBeard,
+            hasMustache
+        });*/
+        
         JButton askButton = new JButton("Ask");
 
         bottomPanel.add(questionLabel);
@@ -232,9 +257,9 @@ public class GUI {
         askButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                question = (String) questionDropdown.getSelectedItem(); // Store selected question
+                question = (Question) questionDropdown.getSelectedItem(); // Store selected question
                 JOptionPane.showMessageDialog(boardFrame,
-                        "You asked: " + question,
+                        "You asked: " + question.getQuestion(),
                         "Question Asked",
                         JOptionPane.INFORMATION_MESSAGE);
 
@@ -259,23 +284,26 @@ public class GUI {
     private void aiTurn() {
         if (!gameboard.isPlayerTurn()) { // AI's turn
             // AI selects a question
-            String aiQuestion = aiInstance.selectRandomFirstQuestion();
+            Question aiQuestion = aiInstance.selectRandomFirstQuestion();
 
             // Keep showing the dialog until the correct answer is selected
             boolean validAnswer = false; // Tracks whether the answer is valid
-            int answer = 0; 
+            boolean answer = false; 
             while (!validAnswer) { // Loop until valid input
-                // Show a dialog with the AI's question and Yes/No buttons
-                answer = JOptionPane.showOptionDialog(
-                        boardFrame,
-                        "AI asks: " + aiQuestion, // AI's question
-                        "AI's Turn", // Title
-                        JOptionPane.YES_NO_OPTION, // Button options
-                        JOptionPane.QUESTION_MESSAGE, // Icon type
-                        null, // Default icon
-                        null, // Default Button labels
-                        null // Default button
+                // Display AI's question with Yes/No options
+                int userInput = JOptionPane.showOptionDialog(
+                    boardFrame,
+                    "AI asks: " + aiQuestion.getQuestion(), // AI's question
+                    "AI's Turn", // Title
+                    JOptionPane.YES_NO_OPTION, // Button options
+                    JOptionPane.QUESTION_MESSAGE, // Icon type
+                    null, // Default icon
+                    null, // Default Button labels
+                    null // Default button
                 );
+
+                // Set answer to true if YES is selected, otherwise false
+                answer = (userInput == JOptionPane.YES_OPTION);
 
                 // Check if the player's response is valid
                 validAnswer = isValidAnswer(aiQuestion, answer);
@@ -283,22 +311,14 @@ public class GUI {
                 // If invalid, stay in the loop (dialog won't close until valid)
             }
 
-            // Extract the AI's question attribute and value
-            String aiAttribute = Gameboard.getAttributeFromQuestion(aiQuestion);
-            Character aiGuessCharacter = Gameboard.chosenCharacter(characters, selectedCharacter);
-            String aiValue = Gameboard.getValueFromQuestion(aiQuestion, aiGuessCharacter);
-
-            // Compare the AI's value to the selected character's value using the same method
-            String actualValue = Gameboard.getValueFromQuestion(aiQuestion, aiGuessCharacter); // AI's actual character value
-
-            // Check if the values match
-            boolean match = aiValue.equalsIgnoreCase(actualValue); // Compare strings (case-insensitive)
-
-            // Remove characters based on the comparison result
-            System.out.println(aiAttribute + " " + aiValue + " " + (answer != 0 && validAnswer));
-            aiCharacters = Gameboard.removeCharacter(aiCharacters, aiAttribute, aiValue, (answer != 0 && validAnswer));
-            // aiCharacters = Gameboard.removeCharacter(aiCharacters, "eye", "green", false);
-
+            aiCharacters = Gameboard.removeCharacter(aiCharacters, aiQuestion.getAttribute(), aiQuestion.getValue(), answer);
+            
+            // Print remaining AI characters using a counted loop
+            System.out.println("Remaining AI characters:");
+            for (int i = 0; i < aiCharacters.size(); i++) { 
+                Character character = aiCharacters.get(i); 
+                System.out.println(character.getName());   
+            }
 
             // Once a valid answer is selected, switch back to the player's turn
             gameboard.switchTurn();
@@ -306,10 +326,26 @@ public class GUI {
     }
     
     // Validate AI Question
-    private boolean isValidAnswer(String question, int answer) {
+    private boolean isValidAnswer(Question question, boolean answer) {
         Character playerCharacter = Gameboard.chosenCharacter(characters, selectedCharacter);
-        String value = Gameboard.getValueFromQuestion(question, playerCharacter);
-        boolean expectedAnswer = Boolean.parseBoolean(value);
-        return (answer == JOptionPane.YES_OPTION) == expectedAnswer;
+        if (question.getAttribute() == "gender") {
+            return answer == (playerCharacter.getGender().equals(question.getValue()));
+        } else if (question.getAttribute() == "hair") {
+            return answer == (playerCharacter.getHairColour().equals(question.getValue()));
+        } else if (question.getAttribute() == "eye") {
+            return answer == (playerCharacter.getEyeColour().equals(question.getValue()));
+        } else if (question.getAttribute() == "glasses") {
+            return answer == playerCharacter.hasGlasses();
+        } else if (question.getAttribute() == "hat") {
+            return answer == playerCharacter.hasHat();
+        } else if (question.getAttribute() == "jewelry") {
+            return answer == playerCharacter.hasJewelry();
+        } else if (question.getAttribute() == "beard") {
+            return answer == playerCharacter.hasBeard();
+        } else if (question.getAttribute() == "mustache") {
+            return answer == playerCharacter.hasMustache();
+        }
+
+        return false;
     }   
 }
