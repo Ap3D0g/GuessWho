@@ -2,10 +2,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main {
-    public static void main (String[] args) {
+    // Make characters and questions static so they can be reused
+    public static ArrayList<Character> characters = new ArrayList<>();
+    public static ArrayList<Question> questions = new ArrayList<>();
 
-        ArrayList<Character> characters = new ArrayList<>();
+    public static void main(String[] args) {
+        // Initialize characters and questions
+        initializeCharacters(); // Initialize characters
+        initializeQuestions();  // Initialize questions
         
+        // Launch GUI
+        new GUI(characters, questions); 
+    }    
+
+    // Initialize characters
+    public static void initializeCharacters() {
+        characters.clear(); // Clear any existing data (important for restarting)
+
         characters.add(new Character("Amy", "Female", "black", "brown", true, false, false, false, false));
         characters.add(new Character("David", "male", "blonde", "brown", false, true, false, false, true));
         characters.add(new Character("Leo", "male", "white", "brown", false, false, false, false, true));
@@ -30,9 +43,12 @@ public class Main {
         characters.add(new Character("Eric", "male", "blue", "blue", false, false, false, false, false));
         characters.add(new Character("Farah", "female", "black", "blue", false, false, false, false, false));
         characters.add(new Character("Sam", "male", "black", "green", false, true, false, false, false));
-        
-        // Initialize Questions
-        ArrayList<Question> questions = new ArrayList<>();
+    }
+
+    // Initialize questions
+    public static void initializeQuestions() {
+        questions.clear(); // Clear any existing data (important for restarting)
+
         questions.add(new Question("Is your character male?", "gender", "male"));
         questions.add(new Question("Is your character female?", "gender", "female"));
         questions.add(new Question("Does your character have black hair?", "hair", "black"));
@@ -49,8 +65,5 @@ public class Main {
         questions.add(new Question("Is your character wearing jewelry?", "jewelry", ""));
         questions.add(new Question("Does your character have a beard?", "beard", ""));
         questions.add(new Question("Does your character have a mustache?", "mustache", ""));
-
-        // Pass characters and questions to GUI
-        new GUI(characters, questions); 
     }
 }

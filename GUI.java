@@ -225,7 +225,7 @@ public class GUI {
                         "You asked: " + question.getQuestion(),
                         "Question Asked",
                         JOptionPane.INFORMATION_MESSAGE);
-               
+            
                 //Remove Question from Dropdown and ArrayList**
                 questions.remove(question);
                 updateDropdown();

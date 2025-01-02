@@ -1,6 +1,9 @@
+import java.awt.Window;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 public class Gameboard {
     
@@ -38,8 +41,22 @@ public class Gameboard {
                 JOptionPane.YES_NO_OPTION);
 
         if (restart == JOptionPane.YES_OPTION) {
-            // Restart the game
-            System.exit(0); // Placeholder for restarting logic
+            // Close the current GUI window
+            Window[] windows = Window.getWindows(); // Get all open windows
+            for (int i = 0; i < windows.length; i++) { // Counted loop
+                if (windows[i] instanceof JFrame) {
+                    windows[i].dispose(); // Close each JFrame
+                }
+            }
+
+            // Reinitialize characters and questions
+            Main.initializeCharacters(); // Reset characters
+            Main.initializeQuestions();  // Reset questions
+
+            // Restart the game - reinitialize GUI with the same characters and questions
+            SwingUtilities.invokeLater(() -> {
+                new GUI(Main.characters, Main.questions); // Reinitialize GUI using Main's lists
+            });
         } else {
             System.exit(0); // Exit the program
         }
