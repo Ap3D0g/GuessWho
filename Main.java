@@ -5,14 +5,16 @@ public class Main {
     // Make characters and questions static so they can be reused
     public static ArrayList<Character> characters = new ArrayList<>();
     public static ArrayList<Question> questions = new ArrayList<>();
+    public static ArrayList<Question> aiQuestions = new ArrayList<>();
 
     public static void main(String[] args) {
         // Initialize characters and questions
         initializeCharacters(); // Initialize characters
         initializeQuestions();  // Initialize questions
+        initializeAIQuestions(); 
         
         // Launch GUI
-        new GUI(characters, questions); 
+        new GUI(characters, questions, aiQuestions); 
     }    
 
     // Initialize characters
@@ -65,5 +67,10 @@ public class Main {
         questions.add(new Question("Is your character wearing jewelry?", "jewelry", ""));
         questions.add(new Question("Does your character have a beard?", "beard", ""));
         questions.add(new Question("Does your character have a mustache?", "mustache", ""));
+    }
+
+    // Initialize questions for AI (separate list)
+    public static void initializeAIQuestions() {
+        aiQuestions = new ArrayList<>(questions); // Make a copy of player questions for AI
     }
 }

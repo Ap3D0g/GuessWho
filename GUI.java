@@ -37,10 +37,10 @@ public class GUI {
     private boolean lastAIAnswer;   // Tracks AI's last answer
 
     // Constructor - Welcome Page
-    public GUI(ArrayList<Character> characters, ArrayList<Question> questions) {
+    public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions) {
         this.characters = characters;
         this.questions = questions;
-        this.aiInstance = new AI(questions); // Pass questions to AI instance
+        this.aiInstance = new AI(new ArrayList<>(aiQuestions)); // Pass questions to AI instance
         gameboard = new Gameboard();
         
         welcomeScreen();
@@ -326,7 +326,7 @@ public class GUI {
 
             lastAIQuestion = aiQuestion; // Store last question
             lastAIAnswer = answer;       // Store last answer
-            
+
             aiCharacters = Gameboard.removeCharacter(aiCharacters, aiQuestion.getAttribute(), aiQuestion.getValue(), answer);
 
             // Print remaining AI characters using a counted loop

@@ -6,13 +6,13 @@ public class AI {
     // Random generator for selection
     private Random random = new Random();
 
-    private ArrayList<Question> questions; // List of questions
+    private ArrayList<Question> aiQuestions; // List of questions
 
     private boolean isFirstQuestion = true; // Tracks if AI is asking the first question
 
     // Constructor that accepts the list of questions
-    public AI(ArrayList<Question> questions) {
-        this.questions = questions; // Store questions
+    public AI(ArrayList<Question> aiQuestions) {
+        this.aiQuestions = new ArrayList<>(aiQuestions); // Store questions
     }
 
     // Method to randomly select a character
@@ -26,9 +26,9 @@ public class AI {
         // **First Question - Random Selection**
         if (isFirstQuestion) {
             isFirstQuestion = false; // Mark first question as used
-            int index = random.nextInt(questions.size()); // Random index
-            Question firstQuestion = questions.get(index); // Pick first question
-            questions.remove(firstQuestion); // Remove asked question
+            int index = random.nextInt(aiQuestions.size()); // Random index
+            Question firstQuestion = aiQuestions.get(index); // Pick first question
+            aiQuestions.remove(firstQuestion); // Remove asked question
             return firstQuestion;
         }
 
@@ -36,8 +36,8 @@ public class AI {
         ArrayList<Question> toRemove = new ArrayList<>();
 
         // 1. **Filter by Remaining Attributes**
-        for (int i = 0; i < questions.size(); i++) {
-            Question q = questions.get(i);
+        for (int i = 0; i < aiQuestions.size(); i++) {
+            Question q = aiQuestions.get(i);
             boolean attributeExists = false;
 
             for (int j = 0; j < aiCharacters.size(); j++) {
@@ -54,15 +54,15 @@ public class AI {
         }
 
         // 2. **Filter by Answer to Last Question**
-        for (int i = 0; i < questions.size(); i++) {
-            Question q = questions.get(i);
+        for (int i = 0; i < aiQuestions.size(); i++) {
+            Question q = aiQuestions.get(i);
 
             // Gender-specific filtering
             if (lastQuestion.getAttribute().equals("gender")) {
                 if (q.getAttribute().equals("gender")) {
                     toRemove.add(q); // Remove all gender questions
                 }
-                if (lastQuestion.getValue().equals("male") && !answer) {
+                if (lastQuestion.getValue().equals("male") && answer) {
                     if (q.getAttribute().equals("beard") || q.getAttribute().equals("mustache")) {
                         toRemove.add(q); // Remove male-specific features
                     }
@@ -85,25 +85,26 @@ public class AI {
         }
 
         // **Remove Questions Marked for Deletion**
-        questions.removeAll(toRemove);
+        aiQuestions.removeAll(toRemove);
 
         // **DEBUG - Print Remaining Questions**
         System.out.println("Remaining Questions for AI:");
-        for (int i = 0; i < questions.size(); i++) {
-            System.out.println(questions.get(i).getQuestion()); // Print each question
+        for (int i = 0; i < aiQuestions.size(); i++) {
+            System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
         }
 
         // **Pick the Next Question Randomly**
-        if (!questions.isEmpty()) {
-            int index = random.nextInt(questions.size()); // Random index
-            Question nextQuestion = questions.get(index); // Select question
-            questions.remove(nextQuestion); // Remove the selected question
+        if (!aiQuestions.isEmpty()) {
+            int index = random.nextInt(aiQuestions.size()); // Random index
+            Question nextQuestion = aiQuestions.get(index); // Select question
+            aiQuestions.remove(nextQuestion); // Remove the selected question
             return nextQuestion; // Return the next question
         }
 
         return null; // Return null if no valid questions remain
-    }
 
+    }
+    
     // **Helper Method: Match Attribute Values**
     private boolean matchesAttribute(Character c, Question q) {
         if (q.getAttribute().equals("gender")) {
@@ -127,6 +128,6 @@ public class AI {
             }
         }
         return false; // Default case
-    }
+    } 
 
 }
