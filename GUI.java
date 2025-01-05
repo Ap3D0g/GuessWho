@@ -33,6 +33,8 @@ public class GUI {
     private JPanel gridPanel; // Gameboard grid panel
     private ArrayList<String> eliminatedCharacters = new ArrayList<>(); // Stores eliminated characters
     private JButton askButton;
+    private Question lastAIQuestion; // Tracks AI's last question
+    private boolean lastAIAnswer;   // Tracks AI's last answer
 
     // Constructor - Welcome Page
     public GUI(ArrayList<Character> characters, ArrayList<Question> questions) {
@@ -294,8 +296,8 @@ public class GUI {
     // AI Turn
     private void aiTurn() {
         if (!gameboard.isPlayerTurn()) { // AI's turn
-            // AI selects a question
-            Question aiQuestion = aiInstance.selectFirstQuestion();
+            // AI selects a question 
+            Question aiQuestion = aiInstance.selectQuestion(aiCharacters, lastAIQuestion, lastAIAnswer);
 
             // Keep showing the dialog until the correct answer is selected
             boolean validAnswer = false; // Tracks whether the answer is valid
@@ -322,8 +324,11 @@ public class GUI {
                 // If invalid, stay in the loop (dialog won't close until valid)
             }
 
-            aiCharacters = Gameboard.removeCharacter(aiCharacters, aiQuestion.getAttribute(), aiQuestion.getValue(), answer);
+            lastAIQuestion = aiQuestion; // Store last question
+            lastAIAnswer = answer;       // Store last answer
             
+            aiCharacters = Gameboard.removeCharacter(aiCharacters, aiQuestion.getAttribute(), aiQuestion.getValue(), answer);
+
             // Print remaining AI characters using a counted loop
             System.out.println("Remaining AI characters:");
             for (int i = 0; i < aiCharacters.size(); i++) { 
