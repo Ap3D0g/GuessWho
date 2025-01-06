@@ -15,6 +15,8 @@ public class Main {
         
         // Launch GUI
         new GUI(characters, questions, aiQuestions); 
+
+        System.out.println("HELLO");
     }   
 
     // Initialize characters
