@@ -1,12 +1,12 @@
 import java.awt.Window;
 import java.util.ArrayList;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class Gameboard {
     
+    //Variables 
     private boolean isPlayerTurn = true; // Player starts first
     private boolean gameOver = false;   // Track if the game has ended
 
@@ -26,9 +26,10 @@ public class Gameboard {
         return isPlayerTurn;
     }
 
-    // End the Game
+    // End the Game / play again 
     public void endGame(String winner) {
         gameOver = true; // Mark the game as over
+        //Show winning message 
         JOptionPane.showMessageDialog(null,
                 winner + " wins the game!",
                 "Game Over",
@@ -40,23 +41,25 @@ public class Gameboard {
                 "Restart?",
                 JOptionPane.YES_NO_OPTION);
 
+        //If user clicks yes to restart game...         
         if (restart == JOptionPane.YES_OPTION) {
             // Close the current GUI window
             Window[] windows = Window.getWindows(); // Get all open windows
-            for (int i = 0; i < windows.length; i++) { // Counted loop
+            for (int i = 0; i < windows.length; i++) { 
                 if (windows[i] instanceof JFrame) {
-                    windows[i].dispose(); // Close each JFrame
+                    windows[i].dispose(); // Close each JFrame (so that the game starts fresh)
                 }
             }
 
             // Reinitialize characters and questions
-            Main.initializeCharacters(); // Reset characters
-            Main.initializeQuestions();  // Reset questions
+            Main.initializeCharacters();
+            Main.initializeQuestions();  
 
             // Restart the game - reinitialize GUI with the same characters and questions
             SwingUtilities.invokeLater(() -> {
                 new GUI(Main.characters, Main.questions, Main.aiQuestions); // Reinitialize GUI using Main's lists
             });
+        // If user clicks NO to playing again...
         } else {
             System.exit(0); // Exit the program
         }
@@ -68,6 +71,7 @@ public class Gameboard {
     }
 
     // Method to get the chosen character's attributes (so that you can compare attributes with questions asked)
+        //the chosen character is orignally stored in a String and this method returns its matching Character object 
     public static Character chosenCharacter(ArrayList<Character> characters, String selectedName) {
         // Loop through all characters using a counted for loop
         for (int i = 0; i < characters.size(); i++) { 
@@ -81,7 +85,7 @@ public class Gameboard {
         return null; // Return null if no match is found
     } 
 
-    //remove characters depending on the question asked and the characteristics of character chosen 
+    // Method to remove characters depending on the question asked and the characteristics of character chosen 
     public static ArrayList<Character> removeCharacter(ArrayList<Character> characters, String attribute, String value, boolean matches) {
         // Create a temporary list to store characters to remove
         ArrayList<Character> toRemove = new ArrayList<>();
@@ -114,7 +118,6 @@ public class Gameboard {
             if ((matches && !match) || (!matches && match)) {
 
                 toRemove.add(c); // Add to removal list
-                // System.out.println("Removed " + c.getName());
             }
         }
     

@@ -1,22 +1,20 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Main {
-    // Make characters and questions static so they can be reused
+    // Initialize objects: Make characters and questions static so they can be reused
     public static ArrayList<Character> characters = new ArrayList<>();
     public static ArrayList<Question> questions = new ArrayList<>();
     public static ArrayList<Question> aiQuestions = new ArrayList<>();
 
     public static void main(String[] args) {
         // Initialize characters and questions
-        initializeCharacters(); // Initialize characters
-        initializeQuestions();  // Initialize questions
+        initializeCharacters(); 
+        initializeQuestions();  
         initializeAIQuestions(); 
         
         // Launch GUI
         new GUI(characters, questions, aiQuestions); 
 
-        System.out.println("HELLO");
     }   
 
     // Initialize characters

@@ -3,11 +3,9 @@ import java.util.Random;
 
 public class AI {
 
-    // Random generator for selection
-    private Random random = new Random();
-
-    private ArrayList<Question> aiQuestions; // List of questions
-
+   // Variables 
+    private Random random = new Random(); // Random generator for question selection
+    private ArrayList<Question> aiQuestions; // List of AI questions
     private boolean isFirstQuestion = true; // Tracks if AI is asking the first question
 
     // Constructor that accepts the list of questions
@@ -21,9 +19,9 @@ public class AI {
         return characters.get(index); // Return the selected character
     }
 
-    // Method to Select the AI Questions
+    // Method to select the AI Questions
     public Question selectQuestion(ArrayList<Character> aiCharacters, Question lastQuestion, boolean answer) {
-        /* 
+        /* DEBUG - print 
         System.out.println("Current questions:");
         for (int i = 0; i < aiQuestions.size(); i++) {
             System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
@@ -37,25 +35,30 @@ public class AI {
             int index = random.nextInt(aiQuestions.size()); // Random index
             Question firstQuestion = aiQuestions.get(index); // Pick first question
             aiQuestions.remove(firstQuestion); // Remove asked question
-            return firstQuestion;
+            return firstQuestion; // Return question 
         }
+
+        // For all other questions...
 
         // ArrayList to store removed questions 
         ArrayList<Question> toRemove = new ArrayList<>();
 
         // Case 1: remove questions if the attribute value no longer exists within the remaining characters 
-        for (int i = 0; i < aiQuestions.size(); i++) {
-            Question q = aiQuestions.get(i);
-            boolean attributeExists = false;
-
+            // e.g. No black haired characters remain => remove "Does your character have black hair?"
+            for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
+            Question q = aiQuestions.get(i); // Get the question 
+            boolean attributeExists = false; 
+            
+            // Loop through all the characters 
             for (int j = 0; j < aiCharacters.size(); j++) {
-                Character c = aiCharacters.get(j);
+                Character c = aiCharacters.get(j); // Get the character 
                 if (matchesAttribute(c, q)) { // Check attribute existence
                     attributeExists = true;
                     break; // Exit loop if match found
                 }
             }
 
+            // If attribute does not exist...
             if (!attributeExists) {
                 toRemove.add(q); // Mark question for removal
             }
@@ -75,30 +78,31 @@ public class AI {
         */
 
         // Case 2: Remove redundant questions based on answer to questions  
-        for (int i = 0; i < aiQuestions.size(); i++) {
-            Question q = aiQuestions.get(i);
+            // E.g. If AI asks "Does your character have blue eyes?", if YES => remove all eye questions, if NO => remove only blue eyes quetion
+        for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
+            Question q = aiQuestions.get(i); //Get the question 
 
             // Gender-specific filtering
-            if (lastQuestion.getAttribute().equals("gender")) {
+            if (lastQuestion.getAttribute().equals("gender")) { // If a gender question is asked...
                 if (q.getAttribute().equals("gender")) {
-                    toRemove.add(q); // Remove all gender questions
+                    toRemove.add(q); // Remove all gender questions 
                 }
-                if (lastQuestion.getValue().equals("male") && answer) {
+                if (lastQuestion.getValue().equals("male") && !answer) { // If the question is asking if the character is male and the answer is no...
                     if (q.getAttribute().equals("beard") || q.getAttribute().equals("mustache")) {
-                        toRemove.add(q); // Remove male-specific features
+                        toRemove.add(q); // Remove male-specific features (No female has a beard or mustache so remove those questions)
                     }
                 }
             }
 
             // Eye color filtering
-            if (lastQuestion.getAttribute().equals("eye")) {
+            if (lastQuestion.getAttribute().equals("eye")) { // If the questions is about eyes and the answer is yes...
                 if (answer && q.getAttribute().equals("eye")) {
                     toRemove.add(q); // Remove other eye color questions
                 }
             }
 
             // Hair color filtering
-            if (lastQuestion.getAttribute().equals("hair")) {
+            if (lastQuestion.getAttribute().equals("hair")) { // If the questions is about hair and the answer is yes...
                 if (answer && q.getAttribute().equals("hair")) {
                     toRemove.add(q); // Remove other hair color questions
                 }
@@ -119,15 +123,16 @@ public class AI {
         System.out.println();
         */
 
-        // Case 3: Remove Questions if all characters have the same attribute value 
-        for (int i = 0; i < aiQuestions.size(); i++) {
-            Question q = aiQuestions.get(i);
+        // Case 3: Remove Questions if all characters have the same attribute value (This covers very few specific cases)
+            // E.g. if only male characters remain, remove male characters question 
+        for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
+            Question q = aiQuestions.get(i); // Get question 
             boolean allSameValue = true; // Assume all have the same value initially
             String firstValue = ""; // To store the first character's value for comparison
 
             // Loop through remaining characters
             for (int j = 0; j < aiCharacters.size(); j++) {
-                Character c = aiCharacters.get(j);
+                Character c = aiCharacters.get(j); // Get character 
                 String value = ""; // Attribute value for comparison
 
                 // Get attribute value based on question
@@ -138,35 +143,30 @@ public class AI {
                 } else if (q.getAttribute().equals("eye")) {
                     value = c.getEyeColour();
                 } else if (q.getAttribute().equals("glasses")) {
-                    // Replace ternary operator with if-else
                     if (c.hasGlasses()) {
                         value = "yes";
                     } else {
                         value = "no";
                     }
                 } else if (q.getAttribute().equals("hat")) {
-                    // Replace ternary operator with if-else
                     if (c.hasHat()) {
                         value = "yes";
                     } else {
                         value = "no";
                     }
                 } else if (q.getAttribute().equals("jewelry")) {
-                    // Replace ternary operator with if-else
                     if (c.hasJewelry()) {
                         value = "yes";
                     } else {
                         value = "no";
                     }
                 } else if (q.getAttribute().equals("beard")) {
-                    // Replace ternary operator with if-else
                     if (c.hasBeard()) {
                         value = "yes";
                     } else {
                         value = "no";
                     }
                 } else if (q.getAttribute().equals("mustache")) {
-                    // Replace ternary operator with if-else
                     if (c.hasMustache()) {
                         value = "yes";
                     } else {
@@ -178,8 +178,8 @@ public class AI {
                 if (j == 0) {
                     firstValue = value; // Set first value
                 } else if (!firstValue.equals(value)) { // Compare all other values to first value 
-                    allSameValue = false;
-                    break; // Exit early
+                    allSameValue = false; // If they do not all have the same attribute value, break 
+                    break; 
                 }
             }
 
@@ -216,29 +216,30 @@ public class AI {
         return null; // Return null if no valid questions remain (this should never exeucte)
     }
     
-    // Helper Method: Match Attribute Values
+    // Helper Method: this method checks if a given character matches the attribute and value specified in a question
     private boolean matchesAttribute(Character c, Question q) {
+        // If the question is about gender... 
+            // The same follows for all other attributes  
         if (q.getAttribute().equals("gender")) {
+            // Compare the character's gender to the value in the question 
             return c.getGender().equalsIgnoreCase(q.getValue());
+        } else if (q.getAttribute().equals("hair")) {
+            return c.getHairColour().equalsIgnoreCase(q.getValue());
+        } else if (q.getAttribute().equals("eye")) {
+            return c.getEyeColour().equalsIgnoreCase(q.getValue());
+        } else if (q.getAttribute().equals("glasses")) {
+            return c.hasGlasses();
+        } else if (q.getAttribute().equals("hat")) {
+            return c.hasHat();
+        } else if (q.getAttribute().equals("jewelry")) {
+            return c.hasJewelry();
+        } else if (q.getAttribute().equals("beard")) {
+            return c.hasBeard();
+        } else if (q.getAttribute().equals("mustache")) {
+            return c.hasMustache();
         }
-        for (int i = 0; i < 1; i++) { // Simplify attributes check using counted loop
-            if (q.getAttribute().equals("hair")) {
-                return c.getHairColour().equalsIgnoreCase(q.getValue());
-            } else if (q.getAttribute().equals("eye")) {
-                return c.getEyeColour().equalsIgnoreCase(q.getValue());
-            } else if (q.getAttribute().equals("glasses")) {
-                return c.hasGlasses();
-            } else if (q.getAttribute().equals("hat")) {
-                return c.hasHat();
-            } else if (q.getAttribute().equals("jewelry")) {
-                return c.hasJewelry();
-            } else if (q.getAttribute().equals("beard")) {
-                return c.hasBeard();
-            } else if (q.getAttribute().equals("mustache")) {
-                return c.hasMustache();
-            }
-        }
-        return false; // Default case
+        
+        return false; // Default case (should not run)
     } 
 
 }

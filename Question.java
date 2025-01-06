@@ -1,15 +1,18 @@
 public class Question {
     
+    //Private attributes 
     private String question; 
     private String attribute;
     private String value; 
 
+    //Constructor 
     public Question(String question, String attribute, String value) {
         this.question = question;
         this.attribute = attribute;
         this.value = value;
     }
 
+    //Getter methods 
     public String getQuestion() {
         return question;
     } 
