@@ -15,7 +15,7 @@ public class Main {
         
         // Launch GUI
         new GUI(characters, questions, aiQuestions); 
-    }    
+    }   
 
     // Initialize characters
     public static void initializeCharacters() {
