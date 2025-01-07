@@ -1,3 +1,11 @@
+/*
+ * Name: April, Lucas, Jerry, Ponnavaddn
+ * Due Date: Jan 15, 2025 
+ * Teacher: Mr. Chu
+ * Course: ISC4U 
+ * Assignemnt: Guess who ISP - Question class
+ */
+
 public class Question {
     
     //Private attributes 

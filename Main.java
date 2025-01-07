@@ -7,6 +7,7 @@ public class Main {
     public static ArrayList<Question> aiQuestions = new ArrayList<>();
 
     public static void main(String[] args) {
+        Leaderboard.loadScores();
         // Initialize characters and questions
         initializeCharacters(); 
         initializeQuestions();  
@@ -15,6 +16,7 @@ public class Main {
         // Launch GUI
         new GUI(characters, questions, aiQuestions); 
 
+        //Leaderboard.updateScore() TODO: keep track of name and score of every player
     }   
 
     // Initialize characters
@@ -51,22 +53,22 @@ public class Main {
     public static void initializeQuestions() {
         questions.clear(); // Clear any existing data (important for restarting)
 
-        questions.add(new Question("1. Is your character male?", "gender", "male"));
-        questions.add(new Question("2. Is your character female?", "gender", "female"));
-        questions.add(new Question("3. Does your character have black hair?", "hair", "black"));
-        questions.add(new Question("4. Does your character have blonde hair?", "hair", "blonde"));
-        questions.add(new Question("5. Does your character have white hair?", "hair", "white"));
-        questions.add(new Question("6. Does your character have ginger hair?", "hair", "ginger"));
-        questions.add(new Question("7. Does your character have blue hair?", "hair", "blue"));
-        questions.add(new Question("8. Does your character have brown hair?", "hair", "brown"));
-        questions.add(new Question("9. Does your character have brown eyes?", "eye", "brown"));
-        questions.add(new Question("10. Does your character have blue eyes?", "eye", "blue"));
-        questions.add(new Question("11. Does your character have green eyes?", "eye", "green"));
-        questions.add(new Question("12. Does your character wear glasses?", "glasses", ""));
-        questions.add(new Question("13. Is your character wearing a hat?", "hat", ""));
-        questions.add(new Question("14. Is your character wearing jewelry?", "jewelry", ""));
-        questions.add(new Question("15. Does your character have a beard?", "beard", ""));
-        questions.add(new Question("16. Does your character have a mustache?", "mustache", ""));
+        questions.add(new Question("Is your character male?", "gender", "male"));
+        questions.add(new Question("Is your character female?", "gender", "female"));
+        questions.add(new Question("Does your character have black hair?", "hair", "black"));
+        questions.add(new Question("Does your character have blonde hair?", "hair", "blonde"));
+        questions.add(new Question("Does your character have white hair?", "hair", "white"));
+        questions.add(new Question("Does your character have ginger hair?", "hair", "ginger"));
+        questions.add(new Question("Does your character have blue hair?", "hair", "blue"));
+        questions.add(new Question("Does your character have brown hair?", "hair", "brown"));
+        questions.add(new Question("Does your character have brown eyes?", "eye", "brown"));
+        questions.add(new Question("Does your character have blue eyes?", "eye", "blue"));
+        questions.add(new Question("Does your character have green eyes?", "eye", "green"));
+        questions.add(new Question("Does your character wear glasses?", "glasses", ""));
+        questions.add(new Question("Is your character wearing a hat?", "hat", ""));
+        questions.add(new Question("Is your character wearing jewelry?", "jewelry", ""));
+        questions.add(new Question("Does your character have a beard?", "beard", ""));
+        questions.add(new Question("Does your character have a mustache?", "mustache", ""));
     }
 
     // Initialize questions for AI (separate list)

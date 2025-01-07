@@ -29,12 +29,17 @@ public class GUI {
     private ArrayList<String> eliminatedCharacters = new ArrayList<>(); // Stores eliminated characters
     private Question lastAIQuestion; // Tracks AI's last question
     private boolean lastAIAnswer;   // Tracks AI's last answer
+    private boolean isDarkTheme = false; // Sets initial theme to light 
 
     // GUI components 
     private JFrame boardFrame; 
     private JComboBox<Question> questionDropdown; 
     private JPanel gridPanel;
     private JButton askButton;
+    private JLabel questionLabel;
+    private JPanel sidePanel;
+    private JPanel bottomPanel; 
+    private JLabel turn;
 
     // Constructor 
     public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions) {
@@ -59,26 +64,38 @@ public class GUI {
         // Create the Welcome Frame
         JFrame frame = new JFrame("Guess Who - Welcome");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 300);
+        frame.setSize(650, 350);
+        frame.setBackground(new Color(66, 121, 161));
         frame.setLayout(new BorderLayout());
+        frame.setResizable(false);
 
         // Title Label
         JLabel titleLabel = new JLabel("Welcome to Guess Who!", JLabel.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 25));
+        titleLabel.setBackground(new Color(66, 121, 161));
+        titleLabel.setForeground(new Color(255, 210, 8));
+        titleLabel.setFont(new Font("Futura", Font.BOLD, 45));
+        titleLabel.setOpaque(true);
+        titleLabel.setBorder(new EmptyBorder(20, 20, 0, 20));
         frame.add(titleLabel, BorderLayout.NORTH);
 
         // Buttons Panel
         JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(66, 121, 161));
         buttonPanel.setLayout(new GridLayout(1, 2, 20, 20));
+        buttonPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         // Start Button
         JButton startButton = new JButton("Start");
-        startButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        startButton.setForeground(new Color(38, 20, 71));
+        startButton.setFont(new Font("Futura", Font.PLAIN, 30));
+        startButton.setFocusPainted(false);
         buttonPanel.add(startButton);
 
         // Rules Button
         JButton rulesButton = new JButton("Rules / How to Play");
-        rulesButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        rulesButton.setForeground(new Color(38, 20, 71));
+        rulesButton.setFont(new Font("Futura", Font.PLAIN, 30));
+        rulesButton.setFocusPainted(false);
         buttonPanel.add(rulesButton);
 
         frame.add(buttonPanel, BorderLayout.CENTER);
@@ -115,22 +132,31 @@ public class GUI {
         // Create the Board Frame
         boardFrame = new JFrame("Guess Who - Gameboard");
         boardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        boardFrame.setSize(1200, 800); // Enlarged window size
+        boardFrame.setBackground(new Color(66, 121, 161));
+        boardFrame.setSize(1100, 900); // Enlarged window size
         boardFrame.setLayout(new BorderLayout());
+        //boardFrame.setResizable(false);
 
         // Title Label
         JLabel title = new JLabel("Guess Who - Gameboard", JLabel.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 20));
+        title.setBackground(new Color(66, 121, 161));
+        title.setForeground(new Color(255, 210, 8));
+        title.setFont(new Font("Futura", Font.BOLD, 65));
+        title.setOpaque(true);
+        title.setBorder(new EmptyBorder(20, 20, 20, 20));
         boardFrame.add(title, BorderLayout.NORTH);
 
         // Gameboard Panel - 6x4 Grid (6 columns, 4 rows)
         gridPanel = new JPanel();
+        gridPanel.setBackground(new Color(66, 121, 161));
         gridPanel.setLayout(new GridLayout(4, 6, 5, 5)); // 4 rows, 6 columns
+        gridPanel.setBorder(new EmptyBorder(0, 20, 0, 5));
 
         // Side Panel for displaying the selected character
-        JPanel sidePanel = new JPanel();
+        sidePanel = new JPanel();
+        sidePanel.setBackground(new Color(66, 121, 161));
         sidePanel.setLayout(new BorderLayout());
-        sidePanel.setBorder(new EmptyBorder(20, 20, 20, 20)); // Add padding around the side panel
+        sidePanel.setBorder(new EmptyBorder(20, 5, 20, 10)); // Add padding around the side panel
 
         selectedCharacterLabel = new JLabel(); // Placeholder for selected character image
         selectedCharacterLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -184,7 +210,12 @@ public class GUI {
                     // Display the selected character's image on the right panel
                     ImageIcon selectedIcon = new ImageIcon("Characters/" + name + ".png");
                     Image selectedImg = selectedIcon.getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH); 
+                    turn = new JLabel("Your Turn");
+                    turn.setForeground(new Color(255, 210, 8));
+                    turn.setFont(new Font("Futura", Font.BOLD, 45));
+                    sidePanel.add(turn, BorderLayout.NORTH);
                     selectedCharacterLabel.setIcon(new ImageIcon(selectedImg));
+                    sidePanel.setBorder(new EmptyBorder(20, 5, 20, 20));
 
                     // Confirmation popup
                     JOptionPane.showMessageDialog(boardFrame,
@@ -214,12 +245,22 @@ public class GUI {
         // Add grid panel to the board frame
         boardFrame.add(gridPanel, BorderLayout.CENTER);
         
-        // Dropdown for Questions
-        JPanel bottomPanel = new JPanel();
-        JLabel questionLabel = new JLabel("Ask a Question:");
+         // Dropdown for Questions
+        bottomPanel = new JPanel();
+        bottomPanel.setBackground(new Color(66, 121, 161));
+        bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
+        questionLabel = new JLabel("Ask a Question:");   
+        questionLabel.setFont(new Font("Futura", Font.PLAIN, 30));
+        questionLabel.setForeground(Color.white);
+        
         questionDropdown = new JComboBox<>(questions.toArray(new Question[0]));
+        questionDropdown.setFont(new Font("Futura", Font.PLAIN, 20));
+        questionDropdown.setForeground(new Color(38, 20, 71));
         
         askButton = new JButton("Ask");
+        askButton.setFont(new Font("Futura", Font.PLAIN, 20));
+        askButton.setForeground(new Color(38, 20, 71));
         askButton.setEnabled(false); // Disable initially (You don't want the user to ask a question before choosing a character)
 
         bottomPanel.add(questionLabel);
@@ -232,6 +273,8 @@ public class GUI {
         askButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                turn.setText(" AI's Turn ");
+
                 question = (Question) questionDropdown.getSelectedItem(); // Store selected question
                 // Display confirmation message 
                 JOptionPane.showMessageDialog(boardFrame,
@@ -302,6 +345,8 @@ public class GUI {
     // AI Turn
     private void aiTurn() {
         if (!gameboard.isPlayerTurn()) { // AI's turn
+            turn.setText("Your Turn");
+
             // AI selects a question 
             Question aiQuestion = aiInstance.selectQuestion(aiCharacters, lastAIQuestion, lastAIAnswer);
 
@@ -427,6 +472,121 @@ public class GUI {
                 charButton.setIcon(new ImageIcon(img)); 
                 charButton.setDisabledIcon(new ImageIcon(img)); 
                 charButton.setEnabled(false); // Ensure button remains disabled
+            }
+        }
+    }
+
+    private void resetGame(){
+        // Reset game variables
+        selectedCharacter = null;
+        selectedCharacterLabel.setIcon(null);
+        characterSelected = false;
+        eliminatedCharacters.clear();
+
+        // Reinitialize player and AI character lists
+        playerCharacters = new ArrayList<>(characters);
+        aiCharacters = new ArrayList<>(characters);
+
+        // Reset AI questions
+        aiInstance = new AI(new ArrayList<>(questions));
+
+        // Recreate the gameboard
+        gameboard = new Gameboard();
+
+        // Re-enable grid panel buttons
+        for (int i = 0; i < gridPanel.getComponentCount(); i++) {
+            JButton button = (JButton) gridPanel.getComponent(i);
+            button.setEnabled(true);
+            button.setIcon(new ImageIcon("Characters/" + characterNames[i] + ".png"));
+        }
+
+        // Reset question dropdown
+        updateDropdown();
+    }
+
+    private void openSettingsWindow(){
+        JDialog settingsDialog = new JDialog(boardFrame, "Settings", true);
+        settingsDialog.setSize(300,200);
+        settingsDialog.setLayout(new BorderLayout());
+
+        JLabel settingsLabel = new JLabel("Settings", JLabel.CENTER);
+        settingsLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        settingsDialog.add(settingsLabel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+
+        // Restart button
+        JButton restartButton = new JButton("Restart Game");
+        buttonPanel.add(restartButton);
+
+        // Theme toggle button
+        JToggleButton themeToggle = new JToggleButton("Enable Dark Theme");
+        buttonPanel.add(themeToggle);
+
+        // Apply initial theme state
+        themeToggle.setSelected(isDarkTheme);
+        if (isDarkTheme){
+            themeToggle.setText("Enable Light Theme");
+        }else{
+            themeToggle.setText("Enable Dark Theme");
+        }
+
+        settingsDialog.add(buttonPanel, BorderLayout.CENTER);
+
+        // Restart button action listener
+        restartButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                boardFrame.dispose(); // Close the gameboard window
+                resetGame(); // Reset all variables and restart
+                welcomeScreen(); // Opens the welcome screen
+                settingsDialog.dispose(); // Close the settings dialog
+            }
+        });
+
+        // Theme toggle action listener
+        themeToggle.addActionListener(new ActionListener() {
+            @Override
+            public  void actionPerformed(ActionEvent e){
+                isDarkTheme = themeToggle.isSelected();
+                if(isDarkTheme){
+                    themeToggle.setText("Enable Light Theme");
+                }else{
+                    themeToggle.setText("Enable Dark Theme");
+                }
+                applyTheme();
+            }
+        });
+
+        settingsDialog.setVisible(true);
+    }
+
+    // Method to apply the selected theme to the game
+    private void applyTheme() {
+        // Declare theme colors
+        Color bgColor;
+
+        // Define light and dark theme colors
+        if (isDarkTheme) {
+            bgColor = Color.BLACK;
+        } else {
+            bgColor = new Color(66, 121, 161);
+        }
+
+        // Update background colors
+        boardFrame.getContentPane().setBackground(bgColor);
+        gridPanel.setBackground(bgColor);
+        bottomPanel.setBackground(bgColor);
+        sidePanel.setBackground(bgColor);
+
+        // Update title label background
+        Component[] components = boardFrame.getContentPane().getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JLabel) {
+                JLabel label = (JLabel) comp;
+                if ("Guess Who - Gameboard".equals(label.getText())) {
+                    label.setBackground(bgColor);
+                }
             }
         }
     }
