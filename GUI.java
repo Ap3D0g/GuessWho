@@ -17,6 +17,7 @@ public class GUI {
 
     private ArrayList<Character> characters; // List of characters 
     private ArrayList<Question> questions; // List of questions 
+    private ArrayList<Question> guessQuestions; // List of guess character questions
     private Gameboard gameboard; // Gameboard instance 
     private AI aiInstance; // Create an AI object 
     private ArrayList<Character> playerCharacters; // Player's active characters
@@ -36,6 +37,8 @@ public class GUI {
     // GUI components 
     private JFrame boardFrame; 
     private JComboBox<Question> questionDropdown; 
+    private JComboBox<Question> guessDropdown; // Dropdown for guessing a character
+    private JButton guessButton; // Button to submit guess
     private JPanel gridPanel;
     private JButton askButton;
     private JLabel questionLabel;
@@ -45,10 +48,11 @@ public class GUI {
     private JButton settingsButton;
 
     // Constructor 
-    public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions) {
+    public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions, ArrayList<Question> guessQuestions) {
         // Initialize characters and questions 
         this.characters = characters;
         this.questions = questions;
+        this.guessQuestions = guessQuestions;
         this.aiInstance = new AI(new ArrayList<>(aiQuestions)); // Create AI instance with a separate copy of AI questions
         
         // Open welcome screen 
@@ -121,7 +125,8 @@ public class GUI {
                         "How to Play:\n\n1. Choose a character for the computer to guess.\n" +
                                 "2. Take turns asking yes/no questions to eliminate characters.\n" +
                                 "3. The first to correctly guess the opponent's character wins!\n" +
-                                "4. Each question asked is 100 points. \n    Ask the least amount of questions to be on the leaderboard!",
+                                "4. You can guess the character at any turn, but be careful! \n    If you guess wrong, you lose automatcially!\n" +
+                                "5. Each question asked is 100 points. \n    Ask the least amount of questions to be on the leaderboard!",
                         "Game Rules",
                         JOptionPane.INFORMATION_MESSAGE);
             }
@@ -153,7 +158,7 @@ public class GUI {
         // Gameboard Panel - 6x4 Grid (6 columns, 4 rows)
         gridPanel = new JPanel();
         gridPanel.setBackground(new Color(66, 121, 161));
-        gridPanel.setLayout(new GridLayout(4, 6, 5, 5)); // 4 rows, 6 columns
+        gridPanel.setLayout(new GridLayout(4, 6, 15, 15)); // 4 rows, 6 columns
         gridPanel.setBorder(new EmptyBorder(0, 20, 0, 5));
 
         // Side Panel for displaying the selected character
@@ -174,9 +179,10 @@ public class GUI {
 
             // Load and resize the image for each character
             ImageIcon icon = new ImageIcon("Characters/" + name + ".png"); // Load image (e.g. "Amy.png")
-            Image img = icon.getImage().getScaledInstance(120, 150, Image.SCALE_SMOOTH); // Larger size
+            Image img = icon.getImage().getScaledInstance(100, 120, Image.SCALE_SMOOTH); // Larger size
             charButton.setIcon(new ImageIcon(img)); // Set the resized image as the button icon
             charButton.setToolTipText(name); // Tooltip with character name
+            charButton.setPreferredSize(new Dimension(120, 150)); 
 
             // Style the button (no border for cleaner look)
             charButton.setBorderPainted(false);
@@ -210,6 +216,7 @@ public class GUI {
                     selectedCharacter = name;
                     characterSelected = true; // Mark a character as selected
                     askButton.setEnabled(true); // Enable the Ask button
+                    guessButton.setEnabled(true);
 
                     // Display the selected character's image on the right panel
                     ImageIcon selectedIcon = new ImageIcon("Characters/" + name + ".png");
@@ -253,10 +260,14 @@ public class GUI {
         // Add grid panel to the board frame
         boardFrame.add(gridPanel, BorderLayout.CENTER);
         
-         // Dropdown for Questions
+        // Dropdown for Questions
         bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(66, 121, 161));
         bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        bottomPanel.setLayout(new GridLayout(2, 1, 10, 10));
+
+        JPanel askPanel = new JPanel();
+        askPanel.setBackground(new Color(66, 121, 161));
         
         questionLabel = new JLabel("Ask a Question:");   
         questionLabel.setFont(new Font("Futura", Font.PLAIN, 30));
@@ -270,6 +281,31 @@ public class GUI {
         askButton.setFont(new Font("Futura", Font.PLAIN, 20));
         askButton.setForeground(new Color(38, 20, 71));
         askButton.setEnabled(false); // Disable initially (You don't want the user to ask a question before choosing a character)
+
+        askPanel.add(questionLabel);
+        askPanel.add(questionDropdown);
+        askPanel.add(askButton);
+
+        // Dropdown for guessing characters
+        JPanel guessPanel = new JPanel();
+        guessPanel.setBackground(new Color(66, 121, 161));
+ 
+        JLabel guessLabel = new JLabel("Guess a Character:");
+        guessLabel.setFont(new Font("Futura", Font.PLAIN, 30));
+        guessLabel.setForeground(Color.white);
+
+        guessDropdown = new JComboBox<>(guessQuestions.toArray(new Question[0])); // Populate dropdown with all character names
+        guessDropdown.setFont(new Font("Futura", Font.PLAIN, 20));
+        guessDropdown.setForeground(new Color(38, 20, 71));
+
+        guessButton = new JButton("Guess");
+        guessButton.setFont(new Font("Futura", Font.PLAIN, 20));
+        guessButton.setForeground(new Color(38, 20, 71));
+        guessButton.setEnabled(false); // Initially disabled until character is selected
+
+        guessPanel.add(guessLabel);
+        guessPanel.add(guessDropdown);
+        guessPanel.add(guessButton);
 
         // Settings Button
         settingsButton = new JButton();
@@ -287,16 +323,108 @@ public class GUI {
         settingsButton.setBorderPainted(false); // No border
         settingsButton.setFocusPainted(false); // No focus highlight
 
-        bottomPanel.add(questionLabel);
-        bottomPanel.add(questionDropdown);
-        bottomPanel.add(askButton);
-        bottomPanel.add(settingsButton);
+        bottomPanel.add(askPanel);  // Row 1: Ask a Question
+        bottomPanel.add(guessPanel); // Row 2: Guess a Character
 
         boardFrame.add(bottomPanel, BorderLayout.SOUTH);
 
         // Settings button action listener
         settingsButton.addActionListener(e -> openSettingsWindow());
 
+        ActionListener buttonListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Increment question count and update score for both actions
+                playerQuestionCount++;
+                score.setText(" Score: " + playerQuestionCount * 100);
+        
+                // Check if the askButton was clicked
+                if (e.getSource() == askButton) {
+                    // Store selected question
+                    Question selectedQuestion = (Question) questionDropdown.getSelectedItem();
+        
+                    // Display confirmation message 
+                    JOptionPane.showMessageDialog(boardFrame,
+                            "You asked: " + selectedQuestion.getQuestion(),
+                            "Question Asked",
+                            JOptionPane.INFORMATION_MESSAGE);
+        
+                    //Remove question and update dropdown
+                    questions.remove(selectedQuestion);
+                    updateDropdown();
+        
+                    // Compare player's question with AI's character
+                    boolean match = compareWithAICharacter(selectedQuestion);
+
+                     // Remove characters based on question match
+                    playerCharacters = Gameboard.removeCharacter(playerCharacters, selectedQuestion.getAttribute(), selectedQuestion.getValue(), match);
+                    
+                    // Track eliminated characters using a counted loop
+                    for (int i = 0; i < characters.size(); i++) { // Loop through all characters
+                        Character c = characters.get(i); // Get the character by index
+
+                        // If the character is NOT in playerCharacters, mark as eliminated
+                        boolean eliminated = true;
+                        for (int j = 0; j < playerCharacters.size(); j++) {
+                            if (c.equals(playerCharacters.get(j))) { // Check if character still exists
+                                eliminated = false; // It's not eliminated
+                                break; // Exit the inner loop early
+                            }
+                        }
+
+                        // Add eliminated characters to the list
+                        if (eliminated && !eliminatedCharacters.contains(c.getName())) { // Avoid duplicates
+                            eliminatedCharacters.add(c.getName()); // Add eliminated character
+                        }
+                    }
+
+                    // Update eliminated images
+                    updateEliminatedCharacterButtons();
+                    updateGuessDropdown();
+
+                    // Print remaining player characters
+                    System.out.println("Remaining Player Characters:");
+                    for (int i = 0; i < playerCharacters.size(); i++) { 
+                        System.out.println(playerCharacters.get(i).getName()); 
+                    }
+        
+                    // Check win condition
+                    if (gameboard.checkWinCondition(playerCharacters)) {
+                        gameboard.endGame("Player", ai, selectedCharacter); // Player wins
+                        return; // Stop further execution
+                    }
+                }
+        
+                // Check if the guessButton was clicked
+                else if (e.getSource() == guessButton) {
+                    // Get selected character from dropdown
+                    Question guess = (Question) guessDropdown.getSelectedItem();
+                    String guessedCharacter = guess.getValue(); // Extract the character name
+        
+                    if (guessedCharacter.equals(ai.getName())) { // Player guessed AI's character correctly
+                        gameboard.endGame("Player", ai, selectedCharacter); // Player wins
+                    } else {
+                        // Player guessed wrong 
+                        JOptionPane.showMessageDialog(boardFrame,
+                                "You guessed wrong! You lose!",
+                                "Game Over",
+                                JOptionPane.ERROR_MESSAGE);
+                        gameboard.endGame("AI", ai, selectedCharacter); //AI wins
+                    }
+                    return; // Exit immediately after guessing
+                }
+        
+                // Switch to AI's turn if no win condition met
+                gameboard.switchTurn();
+                aiTurn();
+            }
+        };
+        
+        // Attach the same listener to both buttons
+        askButton.addActionListener(buttonListener);
+        guessButton.addActionListener(buttonListener);
+
+        /* 
         // Player turn asking a question
         askButton.addActionListener(new ActionListener() {
             @Override
@@ -340,7 +468,9 @@ public class GUI {
                 }
 
                 // Update eliminated images
-                updateEliminatedCharacterButtons();
+                updateEliminatedCharacterButtons(); 
+
+                updateGuessDropdown(); // Refresh the guess dropdown to remove eliminated characters
 
                 // Print remaining player characters
                 System.out.println("Remaining Player Characters:");
@@ -359,6 +489,33 @@ public class GUI {
                 aiTurn();
             }
         });
+
+        guessButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Increment score since guessing also counts as a question
+                playerQuestionCount++;
+                score.setText(" Score: " + Integer.toString(playerQuestionCount * 100));
+        
+                // Get selected character from dropdown
+                String guessedCharacter = (String) guessDropdown.getSelectedItem();
+        
+                // Check if the guess is correct
+                if (guessedCharacter.equals(ai.getName())) { // Player guessed AI's character correctly
+                    gameboard.endGame("Player", ai, selectedCharacter); // Player wins
+                } else { // Player guessed wrong
+                    JOptionPane.showMessageDialog(boardFrame,
+                        "You guessed wrong! You lose!",
+                        "Game Over",
+                        JOptionPane.ERROR_MESSAGE);
+                    gameboard.endGame("AI", ai, selectedCharacter); // AI wins
+                }
+
+                // Switch to AI's turn
+                gameboard.switchTurn();
+                aiTurn();
+            }
+        }); */
 
         // Display Board Frame
         boardFrame.setVisible(true);
@@ -490,6 +647,17 @@ public class GUI {
         }
     }
 
+    // Remove characters that are eliminated in the guess character dropdown 
+    private void updateGuessDropdown() {
+        guessDropdown.removeAllItems(); // Clear dropdown
+    
+        // Repopulate with remaining characters 
+        for (int i = 0; i < playerCharacters.size(); i++) {
+            Character c = playerCharacters.get(i); 
+            guessDropdown.addItem(new Question("Is " + c.getName() + " your character?", "guess", c.getName())); // Add each question to dropdown
+        }
+    }
+
     // Updates eliminated character buttons with new icons 
     private void updateEliminatedCharacterButtons() {
         for (int i = 0; i < characterNames.length; i++) { // Loop through all characters 
@@ -498,7 +666,8 @@ public class GUI {
             if (eliminatedCharacters.contains(name)) {
                 JButton charButton = (JButton) gridPanel.getComponent(i); // Get the corresponding button 
                 ImageIcon icon = new ImageIcon("Remove_Characters/" + name + "X.png"); // Replace with new image 
-                Image img = icon.getImage().getScaledInstance(120, 150, Image.SCALE_SMOOTH);
+                Image img = icon.getImage().getScaledInstance(100, 120, Image.SCALE_SMOOTH);
+                charButton.setPreferredSize(new Dimension(120, 150)); 
                 charButton.setIcon(new ImageIcon(img)); 
                 charButton.setDisabledIcon(new ImageIcon(img)); 
                 charButton.setEnabled(false); // Ensure button remains disabled

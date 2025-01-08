@@ -5,6 +5,7 @@ public class Main {
     public static ArrayList<Character> characters = new ArrayList<>();
     public static ArrayList<Question> questions = new ArrayList<>();
     public static ArrayList<Question> aiQuestions = new ArrayList<>();
+    public static ArrayList<Question> guessQuestions = new ArrayList<>();
 
     public static void main(String[] args) {
         Leaderboard.loadScores();
@@ -15,12 +16,13 @@ public class Main {
         initializeCharacters(); 
         initializeQuestions();  
         initializeAIQuestions(); 
+        initializeGuessQuestions();
 
         // Play background music 
         new Music(); 
 
         // Launch GUI
-        new GUI(characters, questions, aiQuestions); 
+        new GUI(characters, questions, aiQuestions, guessQuestions); 
 
         Leaderboard.updateScore("Jerry", 100); //TODO: keep track of name and score of every player
     }   
@@ -80,6 +82,18 @@ public class Main {
     // Initialize questions for AI (separate list)
     public static void initializeAIQuestions() {
         aiQuestions = new ArrayList<>(questions); // Make a copy of player questions for AI
+    }
+
+    // Initialize guess questions
+    public static void initializeGuessQuestions() {
+        guessQuestions.clear(); // Clear any existing data (important for restarting)
+
+        // Counted for loop to add guess questions for each character
+        for (int i = 0; i < characters.size(); i++) {
+            Character c = characters.get(i); // Access character by index
+            String questionText = "Is " + c.getName() + " your character?"; // Format the question
+            guessQuestions.add(new Question(questionText, "guess", c.getName())); // Create and add question
+        }
     }
 }
 
