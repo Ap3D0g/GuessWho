@@ -19,4 +19,3 @@ public class PlayerScore {
         this.score = score;
     }
 }
-

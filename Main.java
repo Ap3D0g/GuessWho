@@ -8,15 +8,21 @@ public class Main {
 
     public static void main(String[] args) {
         Leaderboard.loadScores();
+
+        Leaderboard.displayLeaderboard();
+
         // Initialize characters and questions
         initializeCharacters(); 
         initializeQuestions();  
         initializeAIQuestions(); 
-        
+
+        // Play background music 
+        new Music(); 
+
         // Launch GUI
         new GUI(characters, questions, aiQuestions); 
 
-        //Leaderboard.updateScore() TODO: keep track of name and score of every player
+        Leaderboard.updateScore("Jerry", 100); //TODO: keep track of name and score of every player
     }   
 
     // Initialize characters

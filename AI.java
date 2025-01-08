@@ -95,7 +95,7 @@ public class AI {
                 if (q.getAttribute().equals("gender")) {
                     toRemove.add(q); // Remove all gender questions 
                 }
-                if (lastQuestion.getValue().equals("male") && !answer) { // If the question is asking if the character is male and the answer is no...
+                if (lastQuestion.getValue().equals("male") && answer) { // If the question is asking if the character is male and the answer is no...
                     if (q.getAttribute().equals("beard") || q.getAttribute().equals("mustache")) {
                         toRemove.add(q); // Remove male-specific features (No female has a beard or mustache so remove those questions)
                     }

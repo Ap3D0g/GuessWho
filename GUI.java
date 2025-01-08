@@ -30,6 +30,8 @@ public class GUI {
     private Question lastAIQuestion; // Tracks AI's last question
     private boolean lastAIAnswer;   // Tracks AI's last answer
     private boolean isDarkTheme = false; // Sets initial theme to light 
+    private int playerQuestionCount = 0; // Tracks the number of questions asked by the player
+    private JLabel score;
 
     // GUI components 
     private JFrame boardFrame; 
@@ -40,6 +42,7 @@ public class GUI {
     private JPanel sidePanel;
     private JPanel bottomPanel; 
     private JLabel turn;
+    private JButton settingsButton;
 
     // Constructor 
     public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions) {
@@ -47,7 +50,6 @@ public class GUI {
         this.characters = characters;
         this.questions = questions;
         this.aiInstance = new AI(new ArrayList<>(aiQuestions)); // Create AI instance with a separate copy of AI questions
-        gameboard = new Gameboard(); // Initialize gameboard 
         
         // Open welcome screen 
         welcomeScreen();
@@ -60,6 +62,7 @@ public class GUI {
         System.out.println("AI selected: " + ai.getName()); // Debugging output
         playerCharacters = new ArrayList<>(characters); // Initialize player's character list
         aiCharacters = new ArrayList<>(characters);  // Initialize AI's character list 
+        gameboard = new Gameboard(aiCharacters, playerCharacters); // Initialize gameboard 
 
         // Create the Welcome Frame
         JFrame frame = new JFrame("Guess Who - Welcome");
@@ -117,7 +120,8 @@ public class GUI {
                 JOptionPane.showMessageDialog(frame,
                         "How to Play:\n\n1. Choose a character for the computer to guess.\n" +
                                 "2. Take turns asking yes/no questions to eliminate characters.\n" +
-                                "3. The first to correctly guess the opponent's character wins!",
+                                "3. The first to correctly guess the opponent's character wins!\n" +
+                                "4. Ask the least amount of questions to be on the leaderboard!",
                         "Game Rules",
                         JOptionPane.INFORMATION_MESSAGE);
             }
@@ -213,7 +217,11 @@ public class GUI {
                     turn = new JLabel("Your Turn");
                     turn.setForeground(new Color(255, 210, 8));
                     turn.setFont(new Font("Futura", Font.BOLD, 45));
+                    score = new JLabel(" Score: " + Integer.toString(playerQuestionCount));
+                    score.setForeground(new Color(255, 210, 8));
+                    score.setFont(new Font("Futura", Font.BOLD, 45));
                     sidePanel.add(turn, BorderLayout.NORTH);
+                    sidePanel.add(score, BorderLayout.SOUTH);
                     selectedCharacterLabel.setIcon(new ImageIcon(selectedImg));
                     sidePanel.setBorder(new EmptyBorder(20, 5, 20, 20));
 
@@ -263,17 +271,38 @@ public class GUI {
         askButton.setForeground(new Color(38, 20, 71));
         askButton.setEnabled(false); // Disable initially (You don't want the user to ask a question before choosing a character)
 
+        // Settings Button
+        settingsButton = new JButton();
+        ImageIcon icon = new ImageIcon("ButtonIcons/blackSettingIcon.png"); // Load icon from file
+
+        // Resize icon
+        Image img = icon.getImage();
+        Image resizedImage = img.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+        settingsButton.setIcon(resizedIcon);
+
+        // Make button background transparent
+        settingsButton.setOpaque(false); // Makes the button non-opaque
+        settingsButton.setContentAreaFilled(false); // No content fill
+        settingsButton.setBorderPainted(false); // No border
+        settingsButton.setFocusPainted(false); // No focus highlight
+
         bottomPanel.add(questionLabel);
         bottomPanel.add(questionDropdown);
         bottomPanel.add(askButton);
+        bottomPanel.add(settingsButton);
 
         boardFrame.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Settings button action listener
+        settingsButton.addActionListener(e -> openSettingsWindow());
 
         // Player turn asking a question
         askButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                turn.setText(" AI's Turn ");
+                playerQuestionCount++;
+                score.setText(" Score: " + Integer.toString(playerQuestionCount));
 
                 question = (Question) questionDropdown.getSelectedItem(); // Store selected question
                 // Display confirmation message 
@@ -345,7 +374,7 @@ public class GUI {
     // AI Turn
     private void aiTurn() {
         if (!gameboard.isPlayerTurn()) { // AI's turn
-            turn.setText("Your Turn");
+            turn.setText(" AI's Turn ");
 
             // AI selects a question 
             Question aiQuestion = aiInstance.selectQuestion(aiCharacters, lastAIQuestion, lastAIAnswer);
@@ -396,6 +425,7 @@ public class GUI {
 
             // Once a valid answer is selected, switch back to the player's turn
             gameboard.switchTurn();
+            turn.setText("Your Turn");
         }
     }
     
@@ -491,7 +521,7 @@ public class GUI {
         aiInstance = new AI(new ArrayList<>(questions));
 
         // Recreate the gameboard
-        gameboard = new Gameboard();
+        gameboard = new Gameboard(aiCharacters, playerCharacters);
 
         // Re-enable grid panel buttons
         for (int i = 0; i < gridPanel.getComponentCount(); i++) {
@@ -522,6 +552,10 @@ public class GUI {
         // Theme toggle button
         JToggleButton themeToggle = new JToggleButton("Enable Dark Theme");
         buttonPanel.add(themeToggle);
+
+        // Music toggle button
+        JToggleButton musicToggle = new JToggleButton("Disable Music");
+        buttonPanel.add(musicToggle);
 
         // Apply initial theme state
         themeToggle.setSelected(isDarkTheme);
@@ -589,6 +623,21 @@ public class GUI {
                 }
             }
         }
+
+        // Update settings icon theme
+        String iconPath;
+        if(isDarkTheme){
+            iconPath = "ButtonIcons/whiteSettingIcon.png";
+        }else{
+            iconPath = "ButtonIcons/blackSettingIcon.png";
+        }
+
+        ImageIcon newIcon = new ImageIcon(iconPath);
+        Image img = newIcon.getImage();
+        Image resizedImg = img.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(resizedImg);
+
+        settingsButton.setIcon(resizedIcon);
     }
 }
 

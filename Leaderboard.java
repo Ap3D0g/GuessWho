@@ -4,8 +4,37 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class Leaderboard {
+
+    public static void displayLeaderboard() {
+        // Create the frame
+        JFrame frame = new JFrame("Leaderboard");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(400, 300);
+
+        // Table data
+        String[] columnNames = {"Player Name", "Score"};
+        List<PlayerScore> sortedScores = getAllScoresSorted();
+        String[][] data = new String[sortedScores.size()][2];
+
+        for (int i = 0; i < sortedScores.size(); i++) {
+            PlayerScore playerScore = sortedScores.get(i);
+            data[i][0] = playerScore.getPlayerName();
+            data[i][1] = String.valueOf(playerScore.getScore());
+        }
+
+        // Create table and add it to a scroll pane
+        JTable table = new JTable(new DefaultTableModel(data, columnNames));
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        // Add the table to the frame
+        frame.add(scrollPane);
+        frame.setVisible(true);
+    }
+    
     private static final String LEADERBOARD_FILE = "leaderboard.txt";
     
     // Maintain scores in an ArrayList (no Map)
@@ -43,8 +72,8 @@ public class Leaderboard {
      */
     public static void saveScores() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(LEADERBOARD_FILE))) {
-            for (PlayerScore ps : scores) {
-                writer.println(ps.getPlayerName() + " " + ps.getScore());
+            for (PlayerScore playerScore : scores) {
+                writer.println(playerScore.getPlayerName() + " " + playerScore.getScore());
             }
         } catch (Exception e) {  // Catch-all
             e.printStackTrace();
@@ -55,9 +84,9 @@ public class Leaderboard {
      * Increment/decrement an existing player's score or create new if not found.
      */
     public static void updateScore(String playerName, int increment) {
-        for (PlayerScore ps : scores) {
-            if (ps.getPlayerName().equalsIgnoreCase(playerName)) {
-                ps.setScore(ps.getScore() + increment);
+        for (PlayerScore playerScore : scores) {
+            if (playerScore.getPlayerName().equalsIgnoreCase(playerName)) {
+                playerScore.setScore(playerScore.getScore() + increment);
                 saveScores();
                 return;
             }
@@ -71,9 +100,9 @@ public class Leaderboard {
      * Returns a specific player's score, or 0 if not found.
      */
     public static int getScore(String playerName) {
-        for (PlayerScore ps : scores) {
-            if (ps.getPlayerName().equalsIgnoreCase(playerName)) {
-                return ps.getScore();
+        for (PlayerScore playerScore : scores) {
+            if (playerScore.getPlayerName().equalsIgnoreCase(playerName)) {
+                return playerScore.getScore();
             }
         }
         return 0;

@@ -17,9 +17,13 @@ public class Gameboard {
     //Variables 
     private boolean isPlayerTurn = true; // Player starts first
     private boolean gameOver = false;   // Track if the game has ended
+    private ArrayList<Character> aiCharacters; // Used to display end message
+    private ArrayList<Character> playerCharacters;
 
     // Constructor
-    public Gameboard() {
+    public Gameboard(ArrayList<Character> aiCharacters, ArrayList<Character> playCharacters) {
+        this.aiCharacters = aiCharacters;
+        this.playerCharacters = playerCharacters;
         this.isPlayerTurn = true; // Player starts first
         this.gameOver = false;   // Game is not over initially
     }
@@ -37,9 +41,17 @@ public class Gameboard {
     // End the Game / play again 
     public void endGame(String winner) {
         gameOver = true; // Mark the game as over
+        String winMessage = "";
         //Show winning message 
+
+        if (winner.equalsIgnoreCase("AI")) {
+            winMessage = "AI wins! They gessed your character " + playerCharacters.get(0).getName();
+        } else if (winner.equalsIgnoreCase("Player")) {
+            winMessage = "You win! You guessed the AI's character " + aiCharacters.get(0).getName();
+        } 
+
         JOptionPane.showMessageDialog(null,
-                winner + " wins the game!",
+                winMessage,
                 "Game Over",
                 JOptionPane.INFORMATION_MESSAGE);
 
