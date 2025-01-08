@@ -14,7 +14,7 @@ public class Music {
     private Clip clip; // Declare Clip as a class-level variable for reuse
 
     public Music() {
-        backgroundMusic("applause_y.wav"); //ENTER FILE PAATH AS STRING
+        backgroundMusic(".wav"); //ENTER FILE PAATH AS STRING
     }
 
     // Method to play background music

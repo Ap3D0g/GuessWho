@@ -62,7 +62,7 @@ public class GUI {
         System.out.println("AI selected: " + ai.getName()); // Debugging output
         playerCharacters = new ArrayList<>(characters); // Initialize player's character list
         aiCharacters = new ArrayList<>(characters);  // Initialize AI's character list 
-        gameboard = new Gameboard(aiCharacters, playerCharacters); // Initialize gameboard 
+        gameboard = new Gameboard(); // Initialize gameboard 
 
         // Create the Welcome Frame
         JFrame frame = new JFrame("Guess Who - Welcome");
@@ -121,7 +121,7 @@ public class GUI {
                         "How to Play:\n\n1. Choose a character for the computer to guess.\n" +
                                 "2. Take turns asking yes/no questions to eliminate characters.\n" +
                                 "3. The first to correctly guess the opponent's character wins!\n" +
-                                "4. Ask the least amount of questions to be on the leaderboard!",
+                                "4. Each question asked is 100 points. \n    Ask the least amount of questions to be on the leaderboard!",
                         "Game Rules",
                         JOptionPane.INFORMATION_MESSAGE);
             }
@@ -302,7 +302,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 playerQuestionCount++;
-                score.setText(" Score: " + Integer.toString(playerQuestionCount));
+                score.setText(" Score: " + Integer.toString(playerQuestionCount * 100));
 
                 question = (Question) questionDropdown.getSelectedItem(); // Store selected question
                 // Display confirmation message 
@@ -350,7 +350,7 @@ public class GUI {
 
                 // Check Win Condition for Player
                 if (gameboard.checkWinCondition(playerCharacters)) { 
-                    gameboard.endGame("Player"); // Player wins
+                    gameboard.endGame("Player", ai, selectedCharacter); // Player wins
                     return; // Stop further execution
                 }
                 
@@ -419,7 +419,7 @@ public class GUI {
 
             // Check win condition for AI
             if (gameboard.checkWinCondition(aiCharacters)) { 
-                gameboard.endGame("AI"); // AI wins
+                gameboard.endGame("AI", ai, selectedCharacter); // AI wins
                 return; // Stop further execution
             }
 
@@ -521,7 +521,7 @@ public class GUI {
         aiInstance = new AI(new ArrayList<>(questions));
 
         // Recreate the gameboard
-        gameboard = new Gameboard(aiCharacters, playerCharacters);
+        gameboard = new Gameboard();
 
         // Re-enable grid panel buttons
         for (int i = 0; i < gridPanel.getComponentCount(); i++) {
