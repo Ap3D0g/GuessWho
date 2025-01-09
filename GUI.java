@@ -4,6 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.border.EmptyBorder;
+import javax.sound.sampled.*;             
+import java.io.File;                      
+import java.io.IOException;                  
 
 public class GUI {
 
@@ -32,7 +35,7 @@ public class GUI {
     private boolean lastAIAnswer;   // Tracks AI's last answer
     private boolean isDarkTheme = false; // Sets initial theme to light 
     private int playerQuestionCount = 0; // Tracks the number of questions asked by the player
-    private JLabel score;
+    private Clip clip;
 
     // GUI components 
     private JFrame boardFrame; 
@@ -44,8 +47,13 @@ public class GUI {
     private JLabel questionLabel;
     private JPanel sidePanel;
     private JPanel bottomPanel; 
+    private JPanel askPanel;
+    private JPanel guessPanel;
     private JLabel turn;
     private JButton settingsButton;
+    private JLabel score;
+
+    private Music music;
 
     // Constructor 
     public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions, ArrayList<Question> guessQuestions) {
@@ -54,6 +62,7 @@ public class GUI {
         this.questions = questions;
         this.guessQuestions = guessQuestions;
         this.aiInstance = new AI(new ArrayList<>(aiQuestions)); // Create AI instance with a separate copy of AI questions
+        this.music = new Music();
         
         // Open welcome screen 
         welcomeScreen();
@@ -111,6 +120,7 @@ public class GUI {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                music.buttonClick("buttonClick.wav");
                 frame.dispose(); // Close welcome window
                 openGameBoard(); // Open the gameboard
             }
@@ -121,6 +131,7 @@ public class GUI {
             // Display rules using a JOptionPane 
             @Override
             public void actionPerformed(ActionEvent e) {
+                music.buttonClick("buttonClick.wav");
                 JOptionPane.showMessageDialog(frame,
                         "How to Play:\n\n1. Choose a character for the computer to guess.\n" +
                                 "2. Take turns asking yes/no questions to eliminate characters.\n" +
@@ -138,6 +149,7 @@ public class GUI {
 
     // Gameboard Window
     private void openGameBoard() {
+        music.backgroundMusic("backgroundMusic.wav");
         // Create the Board Frame
         boardFrame = new JFrame("Guess Who - Gameboard");
         boardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -196,6 +208,7 @@ public class GUI {
             charButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) { 
+                    music.buttonClick("buttonClick.wav");
                     // If player already chose a character and the button is already disabled, exit early (no error message)
                     if (!charButton.isEnabled()) {
                         return; // Simply ignore further clicks 
@@ -266,7 +279,7 @@ public class GUI {
         bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         bottomPanel.setLayout(new GridLayout(2, 1, 10, 10));
 
-        JPanel askPanel = new JPanel();
+        askPanel = new JPanel();
         askPanel.setBackground(new Color(66, 121, 161));
         
         questionLabel = new JLabel("Ask a Question:");   
@@ -287,7 +300,7 @@ public class GUI {
         askPanel.add(askButton);
 
         // Dropdown for guessing characters
-        JPanel guessPanel = new JPanel();
+        guessPanel = new JPanel();
         guessPanel.setBackground(new Color(66, 121, 161));
  
         JLabel guessLabel = new JLabel("Guess a Character:");
@@ -325,18 +338,21 @@ public class GUI {
 
         bottomPanel.add(askPanel);  // Row 1: Ask a Question
         bottomPanel.add(guessPanel); // Row 2: Guess a Character
+        guessPanel.add(settingsButton); // Adds a settings button
 
         boardFrame.add(bottomPanel, BorderLayout.SOUTH);
 
         // Settings button action listener
         settingsButton.addActionListener(e -> openSettingsWindow());
 
+        // Player turn to ask question 
         ActionListener buttonListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                music.buttonClick("buttonClick.wav");
                 // Increment question count and update score for both actions
                 playerQuestionCount++;
-                score.setText(" Score: " + playerQuestionCount * 100);
+                score.setText(" Score: " + playerQuestionCount);
         
                 // Check if the askButton was clicked
                 if (e.getSource() == askButton) {
@@ -405,11 +421,7 @@ public class GUI {
                         gameboard.endGame("Player", ai, selectedCharacter); // Player wins
                     } else {
                         // Player guessed wrong 
-                        JOptionPane.showMessageDialog(boardFrame,
-                                "You guessed wrong! You lose!",
-                                "Game Over",
-                                JOptionPane.ERROR_MESSAGE);
-                        gameboard.endGame("AI", ai, selectedCharacter); //AI wins
+                        gameboard.endGame("AI - wrong Guess", ai, selectedCharacter); //AI wins
                     }
                     return; // Exit immediately after guessing
                 }
@@ -423,99 +435,6 @@ public class GUI {
         // Attach the same listener to both buttons
         askButton.addActionListener(buttonListener);
         guessButton.addActionListener(buttonListener);
-
-        /* 
-        // Player turn asking a question
-        askButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                playerQuestionCount++;
-                score.setText(" Score: " + Integer.toString(playerQuestionCount * 100));
-
-                question = (Question) questionDropdown.getSelectedItem(); // Store selected question
-                // Display confirmation message 
-                JOptionPane.showMessageDialog(boardFrame,
-                        "You asked: " + question.getQuestion(),
-                        "Question Asked",
-                        JOptionPane.INFORMATION_MESSAGE);
-               
-                //Remove question from dropdown and ArrayList
-                questions.remove(question);
-                updateDropdown();
-
-                boolean match = compareWithAICharacter(question); // Compare player's question with AI's character
-
-                // Remove characters based on question match
-                playerCharacters = Gameboard.removeCharacter(playerCharacters, question.getAttribute(), question.getValue(), match);
-
-                // Track eliminated characters using a counted loop
-                for (int i = 0; i < characters.size(); i++) { // Loop through all characters
-                    Character c = characters.get(i); // Get the character by index
-
-                    // If the character is NOT in playerCharacters, mark as eliminated
-                    boolean eliminated = true;
-                    for (int j = 0; j < playerCharacters.size(); j++) {
-                        if (c.equals(playerCharacters.get(j))) { // Check if character still exists
-                            eliminated = false; // It's not eliminated
-                            break; // Exit the inner loop early
-                        }
-                    }
-
-                    // Add eliminated characters to the list
-                    if (eliminated && !eliminatedCharacters.contains(c.getName())) { // Avoid duplicates
-                        eliminatedCharacters.add(c.getName()); // Add eliminated character
-                    }
-                }
-
-                // Update eliminated images
-                updateEliminatedCharacterButtons(); 
-
-                updateGuessDropdown(); // Refresh the guess dropdown to remove eliminated characters
-
-                // Print remaining player characters
-                System.out.println("Remaining Player Characters:");
-                for (int i = 0; i < playerCharacters.size(); i++) { 
-                    System.out.println(playerCharacters.get(i).getName());
-                }
-
-                // Check Win Condition for Player
-                if (gameboard.checkWinCondition(playerCharacters)) { 
-                    gameboard.endGame("Player", ai, selectedCharacter); // Player wins
-                    return; // Stop further execution
-                }
-                
-                // Switch to AI's turn
-                gameboard.switchTurn();
-                aiTurn();
-            }
-        });
-
-        guessButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Increment score since guessing also counts as a question
-                playerQuestionCount++;
-                score.setText(" Score: " + Integer.toString(playerQuestionCount * 100));
-        
-                // Get selected character from dropdown
-                String guessedCharacter = (String) guessDropdown.getSelectedItem();
-        
-                // Check if the guess is correct
-                if (guessedCharacter.equals(ai.getName())) { // Player guessed AI's character correctly
-                    gameboard.endGame("Player", ai, selectedCharacter); // Player wins
-                } else { // Player guessed wrong
-                    JOptionPane.showMessageDialog(boardFrame,
-                        "You guessed wrong! You lose!",
-                        "Game Over",
-                        JOptionPane.ERROR_MESSAGE);
-                    gameboard.endGame("AI", ai, selectedCharacter); // AI wins
-                }
-
-                // Switch to AI's turn
-                gameboard.switchTurn();
-                aiTurn();
-            }
-        }); */
 
         // Display Board Frame
         boardFrame.setVisible(true);
@@ -740,6 +659,7 @@ public class GUI {
         restartButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
+                music.buttonClick("buttonClick.wav");
                 boardFrame.dispose(); // Close the gameboard window
                 resetGame(); // Reset all variables and restart
                 welcomeScreen(); // Opens the welcome screen
@@ -751,6 +671,7 @@ public class GUI {
         themeToggle.addActionListener(new ActionListener() {
             @Override
             public  void actionPerformed(ActionEvent e){
+                music.buttonClick("buttonClick.wav");
                 isDarkTheme = themeToggle.isSelected();
                 if(isDarkTheme){
                     themeToggle.setText("Enable Light Theme");
@@ -781,6 +702,8 @@ public class GUI {
         gridPanel.setBackground(bgColor);
         bottomPanel.setBackground(bgColor);
         sidePanel.setBackground(bgColor);
+        askPanel.setBackground(bgColor);
+        guessPanel.setBackground(bgColor);
 
         // Update title label background
         Component[] components = boardFrame.getContentPane().getComponents();
@@ -808,6 +731,7 @@ public class GUI {
 
         settingsButton.setIcon(resizedIcon);
     }
+    
 }
 
 

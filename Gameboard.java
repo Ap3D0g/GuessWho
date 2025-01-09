@@ -40,9 +40,11 @@ public class Gameboard {
         String winMessage = "";
         //Show winning message 
 
-        if (winner.equalsIgnoreCase("AI")) {
+        if (winner.equalsIgnoreCase("AI")) { // AI wins 
             winMessage = "AI wins! They gessed your character " + selectedCharacter;
-        } else if (winner.equalsIgnoreCase("Player")) {
+        } else if (winner.equalsIgnoreCase("AI - wrong Guess")) {
+            winMessage = "You guessed wrong! You lose!"; // AI wins because player guessed wrong character 
+        } else if (winner.equalsIgnoreCase("Player")) { // Player wins 
             winMessage = "You win! You guessed the AI's character " + ai.getName();
         } 
 

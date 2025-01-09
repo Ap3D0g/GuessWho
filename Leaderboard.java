@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 public class Leaderboard {
 
@@ -13,38 +13,101 @@ public class Leaderboard {
         // Create the frame
         JFrame frame = new JFrame("Leaderboard");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(500, 400);
+        frame.setLayout(new BorderLayout());
 
-        // Table data
-        String[] columnNames = {"Player Name", "Score"};
-        List<PlayerScore> sortedScores = getAllScoresSorted();
-        String[][] data = new String[sortedScores.size()][2];
+        // Title panel with background color and title
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(new Color(45, 85, 135)); // Blue background
+        JLabel titleLabel = new JLabel("Leaderboard", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setForeground(Color.WHITE);
+        titlePanel.add(titleLabel);
 
-        for (int i = 0; i < sortedScores.size(); i++) {
-            PlayerScore playerScore = sortedScores.get(i);
-            data[i][0] = playerScore.getPlayerName();
-            data[i][1] = String.valueOf(playerScore.getScore());
+        // Add title panel to frame
+        frame.add(titlePanel, BorderLayout.NORTH);
+
+        // Panel for leaderboard entries
+        JPanel leaderboardPanel = new JPanel();
+        leaderboardPanel.setLayout(new BoxLayout(leaderboardPanel, BoxLayout.Y_AXIS));
+        leaderboardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        leaderboardPanel.setBackground(new Color(235, 240, 250)); // Light background
+
+        // Get sorted guessess
+        List<PlayerGuesses> sortedGuessess = getAllGuessessSorted();
+
+        // Add each player's guesses with styled labels
+        for (int i = 0; i < sortedGuessess.size(); i++) {
+            PlayerGuesses ps = sortedGuessess.get(i);
+
+            // Create a panel for each player entry
+            JPanel playerPanel = new JPanel();
+            playerPanel.setLayout(new BorderLayout());
+            playerPanel.setBackground(new Color(255, 255, 255)); // White background for entries
+            playerPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Light border
+                BorderFactory.createEmptyBorder(10, 10, 10, 10) // Padding
+            ));
+
+            // Player's rank
+            JLabel rankLabel = new JLabel((i + 1) + ". ", JLabel.LEFT);
+            rankLabel.setFont(new Font("Arial", Font.BOLD, 18));
+            rankLabel.setForeground(new Color(45, 85, 135)); // Blue color
+
+            // Player's name
+            JLabel nameLabel = new JLabel(ps.getPlayerName(), JLabel.LEFT);
+            nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            nameLabel.setForeground(Color.DARK_GRAY);
+
+            // Player's guesses
+            JLabel guessesLabel = new JLabel(String.valueOf(ps.getGuesses()), JLabel.RIGHT);
+            guessesLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            guessesLabel.setForeground(new Color(34, 139, 34)); // Green color for guesses
+
+            // Add labels to player panel
+            playerPanel.add(rankLabel, BorderLayout.WEST);
+            playerPanel.add(nameLabel, BorderLayout.CENTER);
+            playerPanel.add(guessesLabel, BorderLayout.EAST);
+
+            // Add player panel to leaderboard panel
+            leaderboardPanel.add(playerPanel);
+            leaderboardPanel.add(Box.createVerticalStrut(10)); // Add spacing between entries
         }
 
-        // Create table and add it to a scroll pane
-        JTable table = new JTable(new DefaultTableModel(data, columnNames));
-        JScrollPane scrollPane = new JScrollPane(table);
+        // Add leaderboard panel to a scroll pane in case the list is long
+        JScrollPane scrollPane = new JScrollPane(leaderboardPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        frame.add(scrollPane, BorderLayout.CENTER);
 
-        // Add the table to the frame
-        frame.add(scrollPane);
+        // Footer panel with a close button
+        JPanel footerPanel = new JPanel();
+        footerPanel.setBackground(new Color(45, 85, 135)); // Blue background
+        JButton closeButton = new JButton("Close");
+        closeButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        closeButton.setForeground(Color.WHITE);
+        closeButton.setBackground(new Color(200, 50, 50)); // Red background for button
+        closeButton.setFocusPainted(false);
+        closeButton.addActionListener(e -> frame.dispose());
+        footerPanel.add(closeButton);
+
+        // Add footer panel to frame
+        frame.add(footerPanel, BorderLayout.SOUTH);
+
+        // Show the frame
         frame.setVisible(true);
+
     }
     
     private static final String LEADERBOARD_FILE = "leaderboard.txt";
     
-    // Maintain scores in an ArrayList (no Map)
-    private static ArrayList<PlayerScore> scores = new ArrayList<>();
+    // Maintain guessess in an ArrayList (no Map)
+    private static ArrayList<PlayerGuesses> guessess = new ArrayList<>();
 
     /**
-     * Loads scores from a file using Scanner. If the file doesn't exist, do nothing.
+     * Loads guessess from a file using Scanner. If the file doesn't exist, do nothing.
      */
-    public static void loadScores() {
-        scores.clear();
+    public static void loadGuessess() {
+        guessess.clear();
         File file = new File(LEADERBOARD_FILE);
         if (!file.exists()) {
             return;
@@ -53,12 +116,12 @@ public class Leaderboard {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim();
                 if (!line.isEmpty()) {
-                    // Expecting "PlayerName Score"
+                    // Expecting "PlayerName Guesses"
                     String[] parts = line.split("\\s+");
                     if (parts.length == 2) {
                         String playerName = parts[0];
-                        int score = Integer.parseInt(parts[1]);
-                        scores.add(new PlayerScore(playerName, score));
+                        int guesses = Integer.parseInt(parts[1]);
+                        guessess.add(new PlayerGuesses(playerName, guesses));
                     }
                 }
             }
@@ -68,12 +131,12 @@ public class Leaderboard {
     }
 
     /**
-     * Saves scores to a file using PrintWriter. Overwrites old data in the file.
+     * Saves guessess to a file using PrintWriter. Overwrites old data in the file.
      */
-    public static void saveScores() {
+    public static void saveGuessess() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(LEADERBOARD_FILE))) {
-            for (PlayerScore playerScore : scores) {
-                writer.println(playerScore.getPlayerName() + " " + playerScore.getScore());
+            for (PlayerGuesses playerGuesses : guessess) {
+                writer.println(playerGuesses.getPlayerName() + " " + playerGuesses.getGuesses());
             }
         } catch (Exception e) {  // Catch-all
             e.printStackTrace();
@@ -81,42 +144,51 @@ public class Leaderboard {
     }
 
     /**
-     * Increment/decrement an existing player's score or create new if not found.
+     * Increment/decrement an existing player's guesses or create new if not found.
      */
-    public static void updateScore(String playerName, int increment) {
-        for (PlayerScore playerScore : scores) {
-            if (playerScore.getPlayerName().equalsIgnoreCase(playerName)) {
-                playerScore.setScore(playerScore.getScore() + increment);
-                saveScores();
+    public static void updateGuesses(String playerName, int guesses) {
+        for (PlayerGuesses playerGuesses : guessess) {
+            if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
+                playerGuesses.setGuesses(playerGuesses.getGuesses() + guesses);
+                saveGuessess();
                 return;
             }
         }
         // Player not found, create a new entry
-        scores.add(new PlayerScore(playerName, increment));
-        saveScores();
+        guessess.add(new PlayerGuesses(playerName, guesses));
+        saveGuessess();
     }
 
     /**
-     * Returns a specific player's score, or 0 if not found.
+     * Returns a specific player's guesses, or 0 if not found.
      */
-    public static int getScore(String playerName) {
-        for (PlayerScore playerScore : scores) {
-            if (playerScore.getPlayerName().equalsIgnoreCase(playerName)) {
-                return playerScore.getScore();
+    public static int getGuesses(String playerName) {
+        for (PlayerGuesses playerGuesses : guessess) {
+            if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
+                return playerGuesses.getGuesses();
             }
         }
         return 0;
     }
 
     /**
-     * Returns a sorted copy of the leaderboard in descending order by score.
-     * Uses a separate Comparator (ScoreComparator), not an inline compare method.
+     * Returns a sorted copy of the leaderboard in descending order by guesses.
+     * Uses a separate Comparator (GuessesComparator), not an inline compare method.
      */
-    public static List<PlayerScore> getAllScoresSorted() {
-        List<PlayerScore> sortedList = new ArrayList<>(scores);
+    public static List<PlayerGuesses> getAllGuessessSorted() {
+        List<PlayerGuesses> sortedList = new ArrayList<>(guessess); // Create a copy of the guessess
 
-        // Sort using our separate ScoreComparator class
-        sortedList.sort(new ScoreComparator());
+        // Bubble Sort Algorithm to sort in ascending order
+        for (int i = 0; i < sortedList.size() - 1; i++) {
+            for (int j = 0; j < sortedList.size() - i - 1; j++) {
+                if (sortedList.get(j).getGuesses() > sortedList.get(j + 1).getGuesses()) {
+                    // Swap elements
+                    PlayerGuesses temp = sortedList.get(j);
+                    sortedList.set(j, sortedList.get(j + 1));
+                    sortedList.set(j + 1, temp);
+                }
+            }
+        }
 
         return sortedList;
     }

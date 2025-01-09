@@ -29,13 +29,13 @@ public class AI {
 
     // Method to select the AI Questions
     public Question selectQuestion(ArrayList<Character> aiCharacters, Question lastQuestion, boolean answer) {
-        /* DEBUG - print 
+        // DEBUG - print 
         System.out.println("Current questions:");
         for (int i = 0; i < aiQuestions.size(); i++) {
             System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
         }
         System.out.println();
-        */
+        
 
         // Select random first question 
         if (isFirstQuestion) {
@@ -72,7 +72,7 @@ public class AI {
             }
         }
 
-        /* 
+         
         // DEBUG: Print Remaining Questions**
         System.out.println("removed based on attribute values:");
         for (int i = 0; i < toRemove.size(); i++) {
@@ -83,7 +83,7 @@ public class AI {
             System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
         }
         System.out.println();
-        */
+        
 
         // Case 2: Remove redundant questions based on answer to questions  
             // E.g. If AI asks "Does your character have blue eyes?", if YES => remove all eye questions, if NO => remove only blue eyes quetion
@@ -117,7 +117,7 @@ public class AI {
             }
         }
 
-        /* 
+         
         // DEBUG: Print Remaining Questions
         System.out.println("Removed based on answer:");
         for (int i = 0; i < toRemove.size(); i++) {
@@ -129,7 +129,7 @@ public class AI {
             System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
         }
         System.out.println();
-        */
+        
 
         // Case 3: Remove Questions if all characters have the same attribute value (This covers very few specific cases)
             // E.g. if only male characters remain, remove male characters question 
@@ -197,7 +197,7 @@ public class AI {
             }
         }
 
-        /* 
+         
         // DEBUG: Print Questions After New Case
         System.out.println("Removed based on same attribute values:");
         for (int i = 0; i < toRemove.size(); i++) {
@@ -208,7 +208,7 @@ public class AI {
             System.out.println(aiQuestions.get(i).getQuestion());
         }
         System.out.println();
-        */
+        
 
         // Remove all questions marked for deletion from AI Questions list 
         aiQuestions.removeAll(toRemove);

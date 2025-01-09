@@ -1,1 +1,3 @@
-Jerry 1500
+Jerry 4200
+Lucas 2100
+April 4200
