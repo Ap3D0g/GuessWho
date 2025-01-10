@@ -18,6 +18,7 @@ public class Music {
         buttonClick("buttonClick.wav");
     }
 
+    // Link to how to play audio: https://www.geeksforgeeks.org/play-audio-file-using-java/
     // Method to play background music
     public void backgroundMusic(String filePath) {
         try {
@@ -33,7 +34,7 @@ public class Music {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
             clip.start(); // Start playing the music
 
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (Exception e) {
             e.printStackTrace(); // Handle exceptions
         }
     }
@@ -49,7 +50,7 @@ public class Music {
             clip.open(audioStream);
             clip.start();
 
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (Exception e) {
             e.printStackTrace(); // Handle exceptions
         }
     } 

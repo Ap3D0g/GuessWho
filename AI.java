@@ -53,23 +53,23 @@ public class AI {
 
         // Case 1: remove questions if the attribute value no longer exists within the remaining characters 
             // e.g. No black haired characters remain => remove "Does your character have black hair?"
-            for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
-            Question q = aiQuestions.get(i); // Get the question 
-            boolean attributeExists = false; 
-            
-            // Loop through all the characters 
-            for (int j = 0; j < aiCharacters.size(); j++) {
-                Character c = aiCharacters.get(j); // Get the character 
-                if (matchesAttribute(c, q)) { // Check attribute existence
-                    attributeExists = true;
-                    break; // Exit loop if match found
-                }
+        for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
+        Question q = aiQuestions.get(i); // Get the question 
+        boolean attributeExists = false; 
+        
+        // Loop through all the characters 
+        for (int j = 0; j < aiCharacters.size(); j++) {
+            Character c = aiCharacters.get(j); // Get the character 
+            if (matchesAttribute(c, q)) { // Check attribute existence
+                attributeExists = true;
+                break; // Exit loop if match found
             }
+        }
 
-            // If attribute does not exist...
-            if (!attributeExists) {
-                toRemove.add(q); // Mark question for removal
-            }
+        // If attribute does not exist...
+        if (!attributeExists) {
+            toRemove.add(q); // Mark question for removal
+        }
         }
 
          
@@ -117,7 +117,6 @@ public class AI {
             }
         }
 
-         
         // DEBUG: Print Remaining Questions
         System.out.println("Removed based on answer:");
         for (int i = 0; i < toRemove.size(); i++) {
@@ -130,7 +129,6 @@ public class AI {
         }
         System.out.println();
         
-
         // Case 3: Remove Questions if all characters have the same attribute value (This covers very few specific cases)
             // E.g. if only male characters remain, remove male characters question 
         for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
@@ -197,7 +195,6 @@ public class AI {
             }
         }
 
-         
         // DEBUG: Print Questions After New Case
         System.out.println("Removed based on same attribute values:");
         for (int i = 0; i < toRemove.size(); i++) {

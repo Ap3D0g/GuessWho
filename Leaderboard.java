@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -5,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.*;
-import java.awt.*;
 
 public class Leaderboard {
 
@@ -33,12 +33,12 @@ public class Leaderboard {
         leaderboardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         leaderboardPanel.setBackground(new Color(235, 240, 250)); // Light background
 
-        // Get sorted guessess
-        List<PlayerGuesses> sortedGuessess = getAllGuessessSorted();
+        // Get sorted guesses
+        List<PlayerGuesses> sortedGuesses = getAllGuessesSorted();
 
         // Add each player's guesses with styled labels
-        for (int i = 0; i < sortedGuessess.size(); i++) {
-            PlayerGuesses ps = sortedGuessess.get(i);
+        for (int i = 0; i < sortedGuesses.size(); i++) {
+            PlayerGuesses ps = sortedGuesses.get(i);
 
             // Create a panel for each player entry
             JPanel playerPanel = new JPanel();
@@ -100,14 +100,14 @@ public class Leaderboard {
     
     private static final String LEADERBOARD_FILE = "leaderboard.txt";
     
-    // Maintain guessess in an ArrayList (no Map)
-    private static ArrayList<PlayerGuesses> guessess = new ArrayList<>();
+    // Maintain guesses in an ArrayList
+    private static ArrayList<PlayerGuesses> guessesList = new ArrayList<>();
 
     /**
-     * Loads guessess from a file using Scanner. If the file doesn't exist, do nothing.
+     * Loads guesses from a file using Scanner. If the file doesn't exist, do nothing.
      */
-    public static void loadGuessess() {
-        guessess.clear();
+    public static void loadGuesses() {
+        guessesList.clear();
         File file = new File(LEADERBOARD_FILE);
         if (!file.exists()) {
             return;
@@ -121,7 +121,7 @@ public class Leaderboard {
                     if (parts.length == 2) {
                         String playerName = parts[0];
                         int guesses = Integer.parseInt(parts[1]);
-                        guessess.add(new PlayerGuesses(playerName, guesses));
+                        guessesList.add(new PlayerGuesses(playerName, guesses));
                     }
                 }
             }
@@ -131,11 +131,11 @@ public class Leaderboard {
     }
 
     /**
-     * Saves guessess to a file using PrintWriter. Overwrites old data in the file.
+     * Saves guesses to a file using PrintWriter. Overwrites old data in the file.
      */
-    public static void saveGuessess() {
+    public static void saveGuesses() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(LEADERBOARD_FILE))) {
-            for (PlayerGuesses playerGuesses : guessess) {
+            for (PlayerGuesses playerGuesses : guessesList) {
                 writer.println(playerGuesses.getPlayerName() + " " + playerGuesses.getGuesses());
             }
         } catch (Exception e) {  // Catch-all
@@ -147,23 +147,23 @@ public class Leaderboard {
      * Increment/decrement an existing player's guesses or create new if not found.
      */
     public static void updateGuesses(String playerName, int guesses) {
-        for (PlayerGuesses playerGuesses : guessess) {
+        for (PlayerGuesses playerGuesses : guessesList) {
             if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
                 playerGuesses.setGuesses(playerGuesses.getGuesses() + guesses);
-                saveGuessess();
+                saveGuesses();
                 return;
             }
         }
         // Player not found, create a new entry
-        guessess.add(new PlayerGuesses(playerName, guesses));
-        saveGuessess();
+        guessesList.add(new PlayerGuesses(playerName, guesses));
+        saveGuesses();
     }
 
     /**
      * Returns a specific player's guesses, or 0 if not found.
      */
     public static int getGuesses(String playerName) {
-        for (PlayerGuesses playerGuesses : guessess) {
+        for (PlayerGuesses playerGuesses : guessesList) {
             if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
                 return playerGuesses.getGuesses();
             }
@@ -175,8 +175,8 @@ public class Leaderboard {
      * Returns a sorted copy of the leaderboard in descending order by guesses.
      * Uses a separate Comparator (GuessesComparator), not an inline compare method.
      */
-    public static List<PlayerGuesses> getAllGuessessSorted() {
-        List<PlayerGuesses> sortedList = new ArrayList<>(guessess); // Create a copy of the guessess
+    public static List<PlayerGuesses> getAllGuessesSorted() {
+        List<PlayerGuesses> sortedList = new ArrayList<>(guessesList); // Create a copy of the guesses
 
         // Bubble Sort Algorithm to sort in ascending order
         for (int i = 0; i < sortedList.size() - 1; i++) {
@@ -193,7 +193,3 @@ public class Leaderboard {
         return sortedList;
     }
 }
-
-
-
-

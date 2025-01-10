@@ -8,9 +8,7 @@ public class Main {
     public static ArrayList<Question> guessQuestions = new ArrayList<>();
 
     public static void main(String[] args) {
-        Leaderboard.loadGuessess();
-
-        Leaderboard.displayLeaderboard();
+        Leaderboard.loadGuesses();
 
         // Initialize characters and questions
         initializeCharacters(); 
@@ -23,11 +21,6 @@ public class Main {
 
         // Launch GUI
         new GUI(characters, questions, aiQuestions, guessQuestions); 
-
-        Leaderboard.updateGuesses("Jerry", 100);
-        Leaderboard.updateGuesses("Jerry", 200);
-        Leaderboard.updateGuesses("Lucas", 150);
-        Leaderboard.updateGuesses("April", 300);
     }   
 
     // Initialize characters

@@ -4,9 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.border.EmptyBorder;
-import javax.sound.sampled.*;             
-import java.io.File;                      
-import java.io.IOException;                  
+import javax.sound.sampled.*;                  
 
 public class GUI {
 
@@ -35,7 +33,6 @@ public class GUI {
     private boolean lastAIAnswer;   // Tracks AI's last answer
     private boolean isDarkTheme = false; // Sets initial theme to light 
     private int playerQuestionCount = 0; // Tracks the number of questions asked by the player
-    private Clip clip;
 
     // GUI components 
     private JFrame boardFrame; 
@@ -80,7 +77,7 @@ public class GUI {
         // Create the Welcome Frame
         JFrame frame = new JFrame("Guess Who - Welcome");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(650, 350);
+        frame.setSize(800, 350);
         frame.setBackground(new Color(66, 121, 161));
         frame.setLayout(new BorderLayout());
         frame.setResizable(false);
@@ -110,9 +107,16 @@ public class GUI {
         // Rules Button
         JButton rulesButton = new JButton("Rules / How to Play");
         rulesButton.setForeground(new Color(38, 20, 71));
-        rulesButton.setFont(new Font("Futura", Font.PLAIN, 30));
+        rulesButton.setFont(new Font("Futura", Font.PLAIN, 25));
         rulesButton.setFocusPainted(false);
         buttonPanel.add(rulesButton);
+
+        // Leaderboard Button
+        JButton leaderBoardButton = new JButton("Leaderboard");
+        leaderBoardButton.setForeground(new Color(38, 20, 71));
+        leaderBoardButton.setFont(new Font("Futura", Font.PLAIN, 30));
+        leaderBoardButton.setFocusPainted(false);
+        buttonPanel.add(leaderBoardButton);
 
         frame.add(buttonPanel, BorderLayout.CENTER);
 
@@ -137,9 +141,17 @@ public class GUI {
                                 "2. Take turns asking yes/no questions to eliminate characters.\n" +
                                 "3. The first to correctly guess the opponent's character wins!\n" +
                                 "4. You can guess the character at any turn, but be careful! \n    If you guess wrong, you lose automatcially!\n" +
-                                "5. Each question asked is 100 points. \n    Ask the least amount of questions to be on the leaderboard!",
+                                "5. Each question asked is will be added to your total guesses. \n    Ask the least amount of questions to be on the leaderboard!",
                         "Game Rules",
                         JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        // Leaderboard Button Action
+        leaderBoardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Leaderboard.displayLeaderboard();
             }
         });
 
@@ -237,7 +249,7 @@ public class GUI {
                     turn = new JLabel("Your Turn");
                     turn.setForeground(new Color(255, 210, 8));
                     turn.setFont(new Font("Futura", Font.BOLD, 45));
-                    score = new JLabel(" Score: " + Integer.toString(playerQuestionCount));
+                    score = new JLabel(" Guesses: " + Integer.toString(playerQuestionCount));
                     score.setForeground(new Color(255, 210, 8));
                     score.setFont(new Font("Futura", Font.BOLD, 45));
                     sidePanel.add(turn, BorderLayout.NORTH);
@@ -352,7 +364,7 @@ public class GUI {
                 music.buttonClick("buttonClick.wav");
                 // Increment question count and update score for both actions
                 playerQuestionCount++;
-                score.setText(" Score: " + playerQuestionCount);
+                score.setText(" Guesses: " + playerQuestionCount);
         
                 // Check if the askButton was clicked
                 if (e.getSource() == askButton) {
@@ -719,7 +731,7 @@ public class GUI {
         // Update settings icon theme
         String iconPath;
         if(isDarkTheme){
-            iconPath = "ButtonIcons/whiteSettingIcon.png";
+            iconPath = "ButtonIcons/blackSettingIcon.png";
         }else{
             iconPath = "ButtonIcons/blackSettingIcon.png";
         }

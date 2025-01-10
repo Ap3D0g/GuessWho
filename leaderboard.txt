@@ -1,4 +1,6 @@
-Jerry 4200
-Lucas 2100
-April 4200
-
+Jerry 1503
+Lucas 752
+April 1501
+Pon 4
+Jerry2 5
+Jerry3 11
