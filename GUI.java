@@ -33,6 +33,7 @@ public class GUI {
     private boolean lastAIAnswer;   // Tracks AI's last answer
     private boolean isDarkTheme = false; // Sets initial theme to light 
     private int playerQuestionCount = 0; // Tracks the number of questions asked by the player
+    private String username;
 
     // GUI components 
     private JFrame boardFrame; 
@@ -450,6 +451,27 @@ public class GUI {
 
         // Display Board Frame
         boardFrame.setVisible(true);
+
+        // Prompt the user for their username with validation loop
+        username = null;
+        while (username == null || username.trim().isEmpty()) {
+            username = JOptionPane.showInputDialog(
+                    boardFrame,
+                    "Enter your username:",
+                    "Username Entry",
+                    JOptionPane.QUESTION_MESSAGE);
+
+            // Validate username input
+            if (username == null || username.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        boardFrame,
+                        "Username cannot be empty. Please enter a valid username.",
+                        "Invalid Username",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        //System.out.println("Username entered: " + username); // Debugging output
 
         // Popup for initial character selection
         JOptionPane.showMessageDialog(boardFrame,
