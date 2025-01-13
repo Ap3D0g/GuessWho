@@ -6,6 +6,8 @@
  * Assignemnt: Guess who ISP - Question class
  */
 
+// CODED BY: APRIL 
+
 public class Question {
     
     //Private attributes 

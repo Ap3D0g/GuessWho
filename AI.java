@@ -71,7 +71,6 @@ public class AI {
             toRemove.add(q); // Mark question for removal
         }
         }
-
          
         // DEBUG: Print Remaining Questions**
         System.out.println("removed based on attribute values:");

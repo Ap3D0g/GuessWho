@@ -6,6 +6,8 @@
  * Assignemnt: Guess who ISP - Character class
  */
 
+ // CODED BY: APRIL AND JERRY
+ 
 public class Character {
     // Private Attributes
     private String name, gender, hairColour, eyeColour;

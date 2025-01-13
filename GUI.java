@@ -11,8 +11,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.border.EmptyBorder;
-import javax.sound.sampled.*;                  
+import javax.swing.border.EmptyBorder;                
+
+// CODED BY: EVERYONE (look further to see which parts are coded by who)
 
 public class GUI {
 
@@ -24,6 +25,7 @@ public class GUI {
             "Emma", "Rachel", "Ben", "Eric", "Farah", "Sam"
     };
 
+    // Game variables 
     private ArrayList<Character> characters; // List of characters 
     private ArrayList<Question> questions; // List of questions 
     private ArrayList<Question> guessQuestions; // List of guess character questions
@@ -46,10 +48,10 @@ public class GUI {
     // GUI components 
     private JFrame boardFrame; 
     private JComboBox<Question> questionDropdown; 
-    private JComboBox<Question> guessDropdown; // Dropdown for guessing a character
-    private JButton guessButton; // Button to submit guess
-    private JPanel gridPanel;
+    private JComboBox<Question> guessDropdown; 
+    private JButton guessButton; 
     private JButton askButton;
+    private JPanel gridPanel;
     private JLabel questionLabel;
     private JPanel sidePanel;
     private JPanel bottomPanel; 
@@ -59,6 +61,7 @@ public class GUI {
     private JButton settingsButton;
     private JLabel score;
 
+    // Music variable 
     private Music music;
 
     // Constructor 
@@ -73,6 +76,8 @@ public class GUI {
         // Open welcome screen 
         welcomeScreen();
     }
+
+    // CODED BY: LUCAS 
 
     // Welcome screen 
     private void welcomeScreen() {
@@ -133,7 +138,7 @@ public class GUI {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                music.buttonClick("buttonClick.wav");
+                music.buttonClick("buttonClick.wav"); // Button sound 
                 frame.dispose(); // Close welcome window
                 openGameBoard(); // Open the gameboard
             }
@@ -161,6 +166,7 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 music.buttonClick("buttonClick.wav");
+                // Display leaderboard by calling methods 
                 Leaderboard.loadGuesses();
                 Leaderboard.displayLeaderboard();
             }
@@ -179,7 +185,6 @@ public class GUI {
         boardFrame.setBackground(new Color(66, 121, 161));
         boardFrame.setSize(1100, 900); // Enlarged window size
         boardFrame.setLayout(new BorderLayout());
-        //boardFrame.setResizable(false);
 
         // Title Label
         JLabel title = new JLabel("Guess Who - Gameboard", JLabel.CENTER);
@@ -190,7 +195,7 @@ public class GUI {
         title.setBorder(new EmptyBorder(20, 20, 20, 20));
         boardFrame.add(title, BorderLayout.NORTH);
 
-        // Gameboard Panel - 6x4 Grid (6 columns, 4 rows)
+        // Gameboard Panel - 6x4 Grid 
         gridPanel = new JPanel();
         gridPanel.setBackground(new Color(66, 121, 161));
         gridPanel.setLayout(new GridLayout(4, 6, 15, 15)); // 4 rows, 6 columns
@@ -200,12 +205,14 @@ public class GUI {
         sidePanel = new JPanel();
         sidePanel.setBackground(new Color(66, 121, 161));
         sidePanel.setLayout(new BorderLayout());
-        sidePanel.setBorder(new EmptyBorder(20, 5, 20, 10)); // Add padding around the side panel
+        sidePanel.setBorder(new EmptyBorder(20, 5, 20, 10)); 
 
         selectedCharacterLabel = new JLabel(); // Placeholder for selected character image
         selectedCharacterLabel.setHorizontalAlignment(JLabel.CENTER);
         sidePanel.add(selectedCharacterLabel, BorderLayout.CENTER);
         boardFrame.add(sidePanel, BorderLayout.EAST);
+
+        // CODED BY: APRIL & LUCAS
 
         // Add buttons with images for each character
         for (int i = 0; i < characterNames.length; i++) { 
@@ -236,23 +243,12 @@ public class GUI {
                     if (!charButton.isEnabled()) {
                         return; // Simply ignore further clicks 
                     }
-
-                    /* SHOWS ERROR MESSAGE INSTEAD OF JUST DISABLING THE BUTTONS
-                    // Prevent selection if a character has already been chosen
-                    if (characterSelected) {
-                        JOptionPane.showMessageDialog(boardFrame,
-                                "You have already selected a character!",
-                                "Selection Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return; // Exit early
-                    }
-                    */
                     
                     // Save the selected character
                     selectedCharacter = name;
                     characterSelected = true; // Mark a character as selected
                     askButton.setEnabled(true); // Enable the Ask button
-                    guessButton.setEnabled(true);
+                    guessButton.setEnabled(true); // Enable the guess character button 
 
                     // Display the selected character's image on the right panel
                     ImageIcon selectedIcon = new ImageIcon("Characters/" + name + ".png");
@@ -353,20 +349,22 @@ public class GUI {
         ImageIcon resizedIcon = new ImageIcon(resizedImage);
         settingsButton.setIcon(resizedIcon);
 
-        // Make button background transparent
-        settingsButton.setOpaque(false); // Makes the button non-opaque
-        settingsButton.setContentAreaFilled(false); // No content fill
-        settingsButton.setBorderPainted(false); // No border
-        settingsButton.setFocusPainted(false); // No focus highlight
+        // Style button for cleaner look 
+        settingsButton.setOpaque(false); 
+        settingsButton.setContentAreaFilled(false); 
+        settingsButton.setBorderPainted(false);
+        settingsButton.setFocusPainted(false);
 
-        bottomPanel.add(askPanel);  // Row 1: Ask a Question
-        bottomPanel.add(guessPanel); // Row 2: Guess a Character
-        guessPanel.add(settingsButton); // Adds a settings button
+        bottomPanel.add(askPanel); 
+        bottomPanel.add(guessPanel); 
+        guessPanel.add(settingsButton);
 
         boardFrame.add(bottomPanel, BorderLayout.SOUTH);
 
         // Settings button action listener
         settingsButton.addActionListener(e -> openSettingsWindow());
+        
+        // CODED BY: APRIL 
 
         // Player turn to ask question 
         ActionListener buttonListener = new ActionListener() {
@@ -392,7 +390,7 @@ public class GUI {
                     questions.remove(selectedQuestion);
                     updateDropdown();
         
-                    // Compare player's question with AI's character
+                    // Compare player's question with AI's chosen character
                     boolean match = compareWithAICharacter(selectedQuestion);
 
                      // Remove characters based on question match
@@ -417,7 +415,7 @@ public class GUI {
                         }
                     }
 
-                    // Update eliminated images
+                    // Update eliminated images and guess character dropdown 
                     updateEliminatedCharacterButtons();
                     updateGuessDropdown();
 
@@ -429,7 +427,7 @@ public class GUI {
         
                     // Check win condition
                     if (gameboard.checkWinCondition(playerCharacters)) {
-                        Leaderboard.updateGuesses(username, playerGuesses);
+                        Leaderboard.updateGuesses(username, playerGuesses); // Update leaderboard
                         gameboard.endGame("Player", ai, selectedCharacter); // Player wins
                         return; // Stop further execution
                     }
@@ -442,7 +440,7 @@ public class GUI {
                     String guessedCharacter = guess.getValue(); // Extract the character name
         
                     if (guessedCharacter.equals(ai.getName())) { // Player guessed AI's character correctly
-                        Leaderboard.updateGuesses(username, playerGuesses);
+                        Leaderboard.updateGuesses(username, playerGuesses); // Update leaderboard
                         gameboard.endGame("Player", ai, selectedCharacter); // Player wins
                     } else {
                         // Player guessed wrong 
@@ -457,14 +455,14 @@ public class GUI {
             }
         };
         
-        // Attach the same listener to both buttons
+        // Add ActionListener to both buttons
         askButton.addActionListener(buttonListener);
         guessButton.addActionListener(buttonListener);
 
         // Display Board Frame
         boardFrame.setVisible(true);
 
-        // Prompt the user for their username with validation loop
+        // Prompt the user for their username with validation loop at the beginning of game 
         username = null;
         while (username == null || username.trim().isEmpty()) {
             username = JOptionPane.showInputDialog(
@@ -483,8 +481,6 @@ public class GUI {
             }
         }
 
-        //System.out.println("Username entered: " + username); // Debugging output
-
         // Popup for initial character selection
         JOptionPane.showMessageDialog(boardFrame,
                 "Please choose a character for the computer to guess!",
@@ -496,7 +492,7 @@ public class GUI {
     // AI Turn
     private void aiTurn() {
         if (!gameboard.isPlayerTurn()) { // AI's turn
-            turn.setText(" AI's Turn ");
+            turn.setText(" AI's Turn "); // Change display text to show that it's AI's turn
 
             // AI selects a question 
             Question aiQuestion = aiInstance.selectQuestion(aiCharacters, lastAIQuestion, lastAIAnswer);
@@ -640,6 +636,10 @@ public class GUI {
         }
     }
 
+
+    // CODED BY: PONNAVADDN 
+
+    // Restart the game in the middle of a current game
     private void resetGame(){
         // Reset game variables
         selectedCharacter = null;
@@ -666,17 +666,22 @@ public class GUI {
 
         // Reset question dropdown
         updateDropdown();
+        updateGuessDropdown();
     }
 
+    // Settings button frame  
     private void openSettingsWindow(){
+        // Create a dialog for settings 
         JDialog settingsDialog = new JDialog(boardFrame, "Settings", true);
         settingsDialog.setSize(300,200);
         settingsDialog.setLayout(new BorderLayout());
 
+        // Title label for settings 
         JLabel settingsLabel = new JLabel("Settings", JLabel.CENTER);
         settingsLabel.setFont(new Font("Arial", Font.BOLD, 18));
         settingsDialog.add(settingsLabel, BorderLayout.NORTH);
 
+        // Panel to hold the buttons (Restart, Theme Toggle, Music Toggle)
         JPanel buttonPanel = new JPanel();
 
         // Restart button
@@ -688,13 +693,8 @@ public class GUI {
         buttonPanel.add(themeToggle);
 
         // Music toggle button
-        // Music toggle button
         JToggleButton musicToggle = new JToggleButton("Toggle Music");
         buttonPanel.add(musicToggle);
-        /* 
-        JToggleButton musicToggle = new JToggleButton("Disable Music");
-        musicToggle.setSelected(true); // Assume music is playing by default
-        buttonPanel.add(musicToggle); */
 
         // Apply initial theme state
         themeToggle.setSelected(isDarkTheme);
@@ -722,12 +722,12 @@ public class GUI {
         themeToggle.addActionListener(new ActionListener() {
             @Override
             public  void actionPerformed(ActionEvent e){
-                music.buttonClick("buttonClick.wav");
-                isDarkTheme = themeToggle.isSelected();
+                music.buttonClick("buttonClick.wav"); // Button sound 
+                isDarkTheme = themeToggle.isSelected(); 
                 if(isDarkTheme){
-                    themeToggle.setText("Enable Light Theme");
+                    themeToggle.setText("Enable Light Theme"); // Light mode
                 }else{
-                    themeToggle.setText("Enable Dark Theme");
+                    themeToggle.setText("Enable Dark Theme"); // Dark mode 
                 }
                 applyTheme();
             }
@@ -735,8 +735,8 @@ public class GUI {
 
         // Music toggle button action listener
         musicToggle.addActionListener(e -> {
-            music.buttonClick("buttonClick.wav");
-            music.toggleMusic();
+            music.buttonClick("buttonClick.wav"); // Button sound 
+            music.toggleMusic(); // Toggle music 
         });
 
         settingsDialog.setVisible(true);
@@ -763,12 +763,12 @@ public class GUI {
         guessPanel.setBackground(bgColor);
 
         // Update title label background
-        Component[] components = boardFrame.getContentPane().getComponents();
-        for (Component comp : components) {
-            if (comp instanceof JLabel) {
+        Component[] components = boardFrame.getContentPane().getComponents(); // Store all components of boardFrame into an array 
+        for (Component comp : components) { // Loop through all components 
+            if (comp instanceof JLabel) { // Link: https://www.javatpoint.com/downcasting-with-instanceof-operator
                 JLabel label = (JLabel) comp;
                 if ("Guess Who - Gameboard".equals(label.getText())) {
-                    label.setBackground(bgColor);
+                    label.setBackground(bgColor); // Update background colour 
                 }
             }
         }
@@ -776,11 +776,12 @@ public class GUI {
         // Update settings icon theme
         String iconPath;
         if(isDarkTheme){
-            iconPath = "ButtonIcons/blackSettingIcon.png";
+            iconPath = "ButtonIcons/blackSettingIcon.png"; // Dark theme settings icon
         }else{
-            iconPath = "ButtonIcons/whiteSettingIcon.png";
+            iconPath = "ButtonIcons/whiteSettingIcon.png"; // Light theme settings icon
         }
 
+        // Resize the icon and set it to the settings button
         ImageIcon newIcon = new ImageIcon(iconPath);
         Image img = newIcon.getImage();
         Image resizedImg = img.getScaledInstance(30, 30, Image.SCALE_SMOOTH);

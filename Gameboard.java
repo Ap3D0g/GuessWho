@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+// CODED BY: APRIL 
+
 public class Gameboard {
     
     //Variables 
@@ -38,8 +40,8 @@ public class Gameboard {
     public void endGame(String winner, Character ai, String selectedCharacter) {
         gameOver = true; // Mark the game as over
         String winMessage = "";
-        //Show winning message 
 
+        //Show winning message 
         if (winner.equalsIgnoreCase("AI")) { // AI wins 
             winMessage = "AI wins! They gessed your character " + selectedCharacter;
         } else if (winner.equalsIgnoreCase("AI - wrong Guess")) {
@@ -52,15 +54,22 @@ public class Gameboard {
                 winMessage,
                 "Game Over",
                 JOptionPane.INFORMATION_MESSAGE);
-
-        // Option to restart or exit the game
-        int restart = JOptionPane.showConfirmDialog(null,
-                "Do you want to restart?",
-                "Restart?",
-                JOptionPane.YES_NO_OPTION);
-
-        //If user clicks yes to restart game...         
-        if (restart == JOptionPane.YES_OPTION) {
+        
+        // Create an array of options for the dialog
+        Object[] options = {"Restart", "Exit", "Leaderboard"};
+        
+        // Show a JOptionPane with the given options and store the user's choice
+        int choice = JOptionPane.showOptionDialog(null,
+                "Do you want to play again?",
+                "Game Over",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]); // Default selection is "Restart"
+    
+        // Handle user's choice
+        if (choice == 0) { // Restart
             // Close the current GUI window
             Window[] windows = Window.getWindows(); // Get all open windows
             for (int i = 0; i < windows.length; i++) { 
@@ -68,19 +77,22 @@ public class Gameboard {
                     windows[i].dispose(); // Close each JFrame (so that the game starts fresh)
                 }
             }
-
+    
             // Reinitialize characters and questions
             Main.initializeCharacters();
             Main.initializeQuestions();  
-
+    
             // Restart the game - reinitialize GUI with the same characters and questions
             SwingUtilities.invokeLater(() -> {
                 new GUI(Main.characters, Main.questions, Main.aiQuestions, Main.guessQuestions, Main.music); // Reinitialize GUI using Main's lists
             });
-        // If user clicks NO to playing again...
-        } else {
+        } else if (choice == 1 || choice == JOptionPane.CLOSED_OPTION ) { // Exit
             System.exit(0); // Exit the program
+        } else if (choice == 2 ) { // Leaderboard
+            Leaderboard.loadGuesses();
+            Leaderboard.displayLeaderboard();
         }
+
     }
 
     // Check Win Condition

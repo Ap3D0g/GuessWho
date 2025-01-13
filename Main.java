@@ -8,21 +8,24 @@
 
 import java.util.ArrayList;
 
+// CODED BY: APRIL 
+
 public class Main {
     // Initialize objects: Make characters and questions static so they can be reused
     public static ArrayList<Character> characters = new ArrayList<>();
     public static ArrayList<Question> questions = new ArrayList<>();
     public static ArrayList<Question> aiQuestions = new ArrayList<>();
     public static ArrayList<Question> guessQuestions = new ArrayList<>();
-    public static Music music;
+    public static Music music; 
 
     public static void main(String[] args) {
-        music = new Music();
         // Initialize characters and questions
         initializeCharacters(); 
         initializeQuestions();  
         initializeAIQuestions(); 
         initializeGuessQuestions();
+
+        music = new Music(); // Initialize Music 
 
         // Launch GUI
         new GUI(characters, questions, aiQuestions, guessQuestions, music);

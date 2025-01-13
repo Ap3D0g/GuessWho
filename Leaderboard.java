@@ -1,12 +1,21 @@
+/*
+ * Name: April, Lucas, Jerry, Ponnavaddn
+ * Due Date: Jan 15, 2025 
+ * Teacher: Mr. Chu
+ * Course: ISC4U 
+ * Assignemnt: Guess who ISP - Leaderboard class
+ */
+
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.*;
+
+// CODED BY: JERRY
 
 public class Leaderboard {
 
@@ -53,7 +62,7 @@ public class Leaderboard {
             // Player's rank
             JLabel rankLabel = new JLabel((i + 1) + ". ", JLabel.LEFT);
             rankLabel.setFont(new Font("Arial", Font.BOLD, 18));
-            rankLabel.setForeground(new Color(45, 85, 135)); // Blue color
+            rankLabel.setForeground(new Color(45, 85, 135)); 
 
             // Player's name
             JLabel nameLabel = new JLabel(ps.getPlayerName(), JLabel.LEFT);
@@ -63,7 +72,7 @@ public class Leaderboard {
             // Player's guesses
             JLabel guessesLabel = new JLabel(String.valueOf(ps.getGuesses()), JLabel.RIGHT);
             guessesLabel.setFont(new Font("Arial", Font.BOLD, 16));
-            guessesLabel.setForeground(new Color(34, 139, 34)); // Green color for guesses
+            guessesLabel.setForeground(new Color(34, 139, 34)); 
 
             // Add labels to player panel
             playerPanel.add(rankLabel, BorderLayout.WEST);
@@ -82,11 +91,11 @@ public class Leaderboard {
 
         // Footer panel with a close button
         JPanel footerPanel = new JPanel();
-        footerPanel.setBackground(new Color(45, 85, 135)); // Blue background
+        footerPanel.setBackground(new Color(45, 85, 135)); 
         JButton closeButton = new JButton("Close");
         closeButton.setFont(new Font("Arial", Font.PLAIN, 16));
         closeButton.setForeground(Color.BLACK);
-        closeButton.setBackground(new Color(200, 50, 50)); // Red background for button
+        closeButton.setBackground(new Color(200, 50, 50)); 
         closeButton.setFocusPainted(false);
         closeButton.addActionListener(e -> frame.dispose());
         footerPanel.add(closeButton);
@@ -99,6 +108,7 @@ public class Leaderboard {
 
     }
     
+    // File to store all leaderboard data 
     private static final String LEADERBOARD_FILE = "leaderboard.txt";
     
     // Maintain guesses in an ArrayList
@@ -108,21 +118,21 @@ public class Leaderboard {
      * Loads guesses from a file using Scanner. If the file doesn't exist, do nothing.
      */
     public static void loadGuesses() {
-        guessesList.clear();
+        guessesList.clear(); // Clear the list before loading 
         File file = new File(LEADERBOARD_FILE);
-        if (!file.exists()) {
+        if (!file.exists()) { // Exit method if file doens't exist 
             return;
         }
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
-                String line = scanner.nextLine().trim();
+                String line = scanner.nextLine().trim(); // Read and trim each line
                 if (!line.isEmpty()) {
                     // Expecting "PlayerName Guesses"
-                    String[] parts = line.split("\\s+");
+                    String[] parts = line.split("\\s+"); // Split line into player name and guesses
                     if (parts.length == 2) {
                         String playerName = parts[0];
-                        int guesses = Integer.parseInt(parts[1]);
-                        guessesList.add(new PlayerGuesses(playerName, guesses));
+                        int guesses = Integer.parseInt(parts[1]); // Convert guesses to an integer 
+                        guessesList.add(new PlayerGuesses(playerName, guesses)); // Add to the list
                     }
                 }
             }
@@ -137,7 +147,7 @@ public class Leaderboard {
     public static void saveGuesses() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(LEADERBOARD_FILE))) {
             for (PlayerGuesses playerGuesses : guessesList) {
-                writer.println(playerGuesses.getPlayerName() + " " + playerGuesses.getGuesses());
+                writer.println(playerGuesses.getPlayerName() + " " + playerGuesses.getGuesses()); // Write name and guesses
             }
         } catch (Exception e) {  // Catch-all
             e.printStackTrace();
@@ -153,7 +163,7 @@ public class Leaderboard {
                 // Replace the existing guesses if the new guesses are fewer
                 if (newGuesses < playerGuesses.getGuesses()) {
                     playerGuesses.setGuesses(newGuesses);
-                    saveGuesses();
+                    saveGuesses(); // Save updated guesses to file
                 }
                 return;
             }
@@ -161,7 +171,7 @@ public class Leaderboard {
 
         // Player not found, create a new entry
         guessesList.add(new PlayerGuesses(playerName, newGuesses));
-        saveGuesses();
+        saveGuesses(); // Save new player data to file
     }
 
     /**
@@ -170,7 +180,7 @@ public class Leaderboard {
     public static int getGuesses(String playerName) {
         for (PlayerGuesses playerGuesses : guessesList) {
             if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
-                return playerGuesses.getGuesses();
+                return playerGuesses.getGuesses(); 
             }
         }
         return 0;
@@ -183,7 +193,7 @@ public class Leaderboard {
     public static List<PlayerGuesses> getAllGuessesSorted() {
         List<PlayerGuesses> sortedList = new ArrayList<>(guessesList); // Create a copy of the guesses
 
-        // Bubble Sort Algorithm to sort in ascending order
+        // Bubble Sort Algorithm to sort in descending order
         for (int i = 0; i < sortedList.size() - 1; i++) {
             for (int j = 0; j < sortedList.size() - i - 1; j++) {
                 if (sortedList.get(j).getGuesses() < sortedList.get(j + 1).getGuesses()) {
@@ -195,6 +205,6 @@ public class Leaderboard {
             }
         }
 
-        return sortedList;
+        return sortedList; // Return sorted list 
     }
 }
