@@ -3,7 +3,7 @@
  * Due Date: Jan 15, 2025 
  * Teacher: Mr. Chu
  * Course: ISC4U 
- * Assignemnt: Guess who ISP - Leaderboard class
+ * Assignemnt: Guess who ISP - Leaderboard class 
  */
 
 import java.awt.*;

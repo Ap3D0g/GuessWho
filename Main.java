@@ -8,7 +8,7 @@
 
 import java.util.ArrayList;
 
-// CODED BY: APRIL 
+// CODED BY: APRIL  
 
 public class Main {
     // Initialize objects: Make characters and questions static so they can be reused

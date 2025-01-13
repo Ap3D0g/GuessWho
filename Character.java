@@ -6,7 +6,7 @@
  * Assignemnt: Guess who ISP - Character class
  */
 
- // CODED BY: APRIL AND JERRY
+ // CODED BY: APRIL AND JERRY 
  
 public class Character {
     // Private Attributes

@@ -9,7 +9,7 @@
 import javax.sound.sampled.*;                 // Audio components
 import java.io.File;                          // File handling
 
-// CODED BY: PONNAVADDN & APRIL 
+// CODED BY: PONNAVADDN & APRIL  
 
 public class Music {
     private Clip clip; // Sound effects 
