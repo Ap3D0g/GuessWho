@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-// CODED BY: APRIL  
+// CODED BY: APRIL   
 
 public class Gameboard {
     

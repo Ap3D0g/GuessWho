@@ -6,8 +6,10 @@
  * Assignemnt: Guess who ISP - AI class
  */
 
-import java.util.ArrayList; 
+import java.util.ArrayList;    
 import java.util.Random;
+
+// CODED BY: APRIL & PONNAVADDN
 
 public class AI {
 

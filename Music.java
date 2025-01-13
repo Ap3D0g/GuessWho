@@ -3,7 +3,7 @@
  * Due Date: Jan 15, 2025 
  * Teacher: Mr. Chu
  * Course: ISC4U 
- * Assignemnt: Guess who ISP - Music class
+ * Assignemnt: Guess who ISP - Music class  
  */
 
 import javax.sound.sampled.*;                 // Audio components
