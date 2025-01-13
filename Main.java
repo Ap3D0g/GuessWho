@@ -1,3 +1,11 @@
+/*
+ * Name: April, Lucas, Jerry, Ponnavaddn
+ * Due Date: Jan 15, 2025 
+ * Teacher: Mr. Chu
+ * Course: ISC4U 
+ * Assignemnt: Guess who ISP - Main class
+ */
+
 import java.util.ArrayList;
 
 public class Main {
@@ -6,21 +14,19 @@ public class Main {
     public static ArrayList<Question> questions = new ArrayList<>();
     public static ArrayList<Question> aiQuestions = new ArrayList<>();
     public static ArrayList<Question> guessQuestions = new ArrayList<>();
+    public static Music music;
 
     public static void main(String[] args) {
-        Leaderboard.loadGuesses();
-
+        music = new Music();
         // Initialize characters and questions
         initializeCharacters(); 
         initializeQuestions();  
         initializeAIQuestions(); 
         initializeGuessQuestions();
 
-        // Play background music 
-        //new Music(); 
-
         // Launch GUI
-        new GUI(characters, questions, aiQuestions, guessQuestions); 
+        new GUI(characters, questions, aiQuestions, guessQuestions, music);
+
     }   
 
     // Initialize characters

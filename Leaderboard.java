@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class Leaderboard {
         footerPanel.setBackground(new Color(45, 85, 135)); // Blue background
         JButton closeButton = new JButton("Close");
         closeButton.setFont(new Font("Arial", Font.PLAIN, 16));
-        closeButton.setForeground(Color.WHITE);
+        closeButton.setForeground(Color.BLACK);
         closeButton.setBackground(new Color(200, 50, 50)); // Red background for button
         closeButton.setFocusPainted(false);
         closeButton.addActionListener(e -> frame.dispose());
@@ -146,16 +147,20 @@ public class Leaderboard {
     /**
      * Increment/decrement an existing player's guesses or create new if not found.
      */
-    public static void updateGuesses(String playerName, int guesses) {
+    public static void updateGuesses(String playerName, int newGuesses) {
         for (PlayerGuesses playerGuesses : guessesList) {
             if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
-                playerGuesses.setGuesses(playerGuesses.getGuesses() + guesses);
-                saveGuesses();
+                // Replace the existing guesses if the new guesses are fewer
+                if (newGuesses < playerGuesses.getGuesses()) {
+                    playerGuesses.setGuesses(newGuesses);
+                    saveGuesses();
+                }
                 return;
             }
         }
+
         // Player not found, create a new entry
-        guessesList.add(new PlayerGuesses(playerName, guesses));
+        guessesList.add(new PlayerGuesses(playerName, newGuesses));
         saveGuesses();
     }
 
@@ -181,7 +186,7 @@ public class Leaderboard {
         // Bubble Sort Algorithm to sort in ascending order
         for (int i = 0; i < sortedList.size() - 1; i++) {
             for (int j = 0; j < sortedList.size() - i - 1; j++) {
-                if (sortedList.get(j).getGuesses() > sortedList.get(j + 1).getGuesses()) {
+                if (sortedList.get(j).getGuesses() < sortedList.get(j + 1).getGuesses()) {
                     // Swap elements
                     PlayerGuesses temp = sortedList.get(j);
                     sortedList.set(j, sortedList.get(j + 1));

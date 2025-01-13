@@ -1,3 +1,11 @@
+/*
+ * Name: April, Lucas, Jerry, Ponnavaddn
+ * Due Date: Jan 15, 2025 
+ * Teacher: Mr. Chu
+ * Course: ISC4U 
+ * Assignemnt: Guess who ISP - GUI class
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,7 +40,7 @@ public class GUI {
     private Question lastAIQuestion; // Tracks AI's last question
     private boolean lastAIAnswer;   // Tracks AI's last answer
     private boolean isDarkTheme = false; // Sets initial theme to light 
-    private int playerQuestionCount = 0; // Tracks the number of questions asked by the player
+    private int playerGuesses = 0; // Tracks the number of questions asked by the player
     private String username;
 
     // GUI components 
@@ -54,13 +62,13 @@ public class GUI {
     private Music music;
 
     // Constructor 
-    public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions, ArrayList<Question> guessQuestions) {
+    public GUI(ArrayList<Character> characters, ArrayList<Question> questions, ArrayList<Question> aiQuestions, ArrayList<Question> guessQuestions, Music music) {
         // Initialize characters and questions 
         this.characters = characters;
         this.questions = questions;
         this.guessQuestions = guessQuestions;
         this.aiInstance = new AI(new ArrayList<>(aiQuestions)); // Create AI instance with a separate copy of AI questions
-        this.music = new Music();
+        this.music = music;
         
         // Open welcome screen 
         welcomeScreen();
@@ -152,6 +160,8 @@ public class GUI {
         leaderBoardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                music.buttonClick("buttonClick.wav");
+                Leaderboard.loadGuesses();
                 Leaderboard.displayLeaderboard();
             }
         });
@@ -250,7 +260,7 @@ public class GUI {
                     turn = new JLabel("Your Turn");
                     turn.setForeground(new Color(255, 210, 8));
                     turn.setFont(new Font("Futura", Font.BOLD, 45));
-                    score = new JLabel(" Guesses: " + Integer.toString(playerQuestionCount));
+                    score = new JLabel(" Guesses: " + Integer.toString(playerGuesses));
                     score.setForeground(new Color(255, 210, 8));
                     score.setFont(new Font("Futura", Font.BOLD, 45));
                     sidePanel.add(turn, BorderLayout.NORTH);
@@ -364,8 +374,8 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 music.buttonClick("buttonClick.wav");
                 // Increment question count and update score for both actions
-                playerQuestionCount++;
-                score.setText(" Guesses: " + playerQuestionCount);
+                playerGuesses++;
+                score.setText(" Guesses: " + playerGuesses);
         
                 // Check if the askButton was clicked
                 if (e.getSource() == askButton) {
@@ -419,6 +429,7 @@ public class GUI {
         
                     // Check win condition
                     if (gameboard.checkWinCondition(playerCharacters)) {
+                        Leaderboard.updateGuesses(username, playerGuesses);
                         gameboard.endGame("Player", ai, selectedCharacter); // Player wins
                         return; // Stop further execution
                     }
@@ -431,6 +442,7 @@ public class GUI {
                     String guessedCharacter = guess.getValue(); // Extract the character name
         
                     if (guessedCharacter.equals(ai.getName())) { // Player guessed AI's character correctly
+                        Leaderboard.updateGuesses(username, playerGuesses);
                         gameboard.endGame("Player", ai, selectedCharacter); // Player wins
                     } else {
                         // Player guessed wrong 
@@ -676,8 +688,13 @@ public class GUI {
         buttonPanel.add(themeToggle);
 
         // Music toggle button
-        JToggleButton musicToggle = new JToggleButton("Disable Music");
+        // Music toggle button
+        JToggleButton musicToggle = new JToggleButton("Toggle Music");
         buttonPanel.add(musicToggle);
+        /* 
+        JToggleButton musicToggle = new JToggleButton("Disable Music");
+        musicToggle.setSelected(true); // Assume music is playing by default
+        buttonPanel.add(musicToggle); */
 
         // Apply initial theme state
         themeToggle.setSelected(isDarkTheme);
@@ -714,6 +731,12 @@ public class GUI {
                 }
                 applyTheme();
             }
+        });
+
+        // Music toggle button action listener
+        musicToggle.addActionListener(e -> {
+            music.buttonClick("buttonClick.wav");
+            music.toggleMusic();
         });
 
         settingsDialog.setVisible(true);
@@ -755,7 +778,7 @@ public class GUI {
         if(isDarkTheme){
             iconPath = "ButtonIcons/blackSettingIcon.png";
         }else{
-            iconPath = "ButtonIcons/blackSettingIcon.png";
+            iconPath = "ButtonIcons/whiteSettingIcon.png";
         }
 
         ImageIcon newIcon = new ImageIcon(iconPath);
@@ -767,10 +790,3 @@ public class GUI {
     }
     
 }
-
-
-
-
-
-
-

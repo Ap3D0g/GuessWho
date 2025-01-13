@@ -75,7 +75,7 @@ public class Gameboard {
 
             // Restart the game - reinitialize GUI with the same characters and questions
             SwingUtilities.invokeLater(() -> {
-                new GUI(Main.characters, Main.questions, Main.aiQuestions, Main.guessQuestions); // Reinitialize GUI using Main's lists
+                new GUI(Main.characters, Main.questions, Main.aiQuestions, Main.guessQuestions, Main.music); // Reinitialize GUI using Main's lists
             });
         // If user clicks NO to playing again...
         } else {
