@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 // CODED BY: APRIL  
 
+// This is the main class that instatiates everything and runs the code
 public class Main {
     // Initialize objects: Make characters and questions static so they can be reused
     public static ArrayList<Character> characters = new ArrayList<>();

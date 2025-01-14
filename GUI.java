@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 
 // CODED BY: EVERYONE (look further to see which parts are coded by who)
 
+// This class handles the GUI of the game as well as switching between player turns (implements all the methods from other classes)
 public class GUI {
 
     // Variables
@@ -79,7 +80,7 @@ public class GUI {
 
     // CODED BY: LUCAS 
 
-    // Welcome screen 
+    // Welcome screen GUI components  
     private void welcomeScreen() {
         // AI Selects a Character
         ai = aiInstance.aiCharacter(characters); // AI randomly selects a character
@@ -176,7 +177,7 @@ public class GUI {
         frame.setVisible(true);
     }
 
-    // Gameboard Window
+    // Gameboard Window 
     private void openGameBoard() {
         music.backgroundMusic("backgroundMusic.wav");
         // Create the Board Frame
@@ -364,7 +365,7 @@ public class GUI {
         // Settings button action listener
         settingsButton.addActionListener(e -> openSettingsWindow());
         
-        // CODED BY: APRIL 
+        // CODED BY: APRIL & LUCAS
 
         // Player turn to ask question 
         ActionListener buttonListener = new ActionListener() {
@@ -547,7 +548,12 @@ public class GUI {
         }
     }
     
-    //compare player question with AI attribute 
+    /*
+     * Compares the player's question with the AI's chosen character's attributes.
+     *
+     * @param question The question asked by the player, containing an attribute and a value to check.
+     * @return `true` if the AI's character matches the attribute and value in the question, otherwise `false`.
+     */
     private boolean compareWithAICharacter(Question question) {
         // Check if question is about gender (the same for all other attributes)
         if (question.getAttribute().equals("gender")) {
@@ -571,7 +577,13 @@ public class GUI {
         return false; // Default case (should never happen)
     }
 
-    // Validate AI Question
+    /*
+    * Validates the AI's question by checking if the player's selected character's attributes match the question's condition.
+    *
+    * @param question The question asked by the AI, containing an attribute and a value to verify.
+    * @param answer The player's response to the AI's question (true for "Yes", false for "No").
+    * @return `true` if the answer matches the player's selected character's attribute, otherwise `false`.
+    */
     private boolean isValidAnswer(Question question, boolean answer) {
         // Retrieve the player's selected character based on their choice
         Character playerCharacter = Gameboard.chosenCharacter(characters, selectedCharacter);
@@ -636,7 +648,6 @@ public class GUI {
         }
     }
 
-
     // CODED BY: PONNAVADDN 
 
     // Restart the game in the middle of a current game
@@ -646,6 +657,7 @@ public class GUI {
         selectedCharacterLabel.setIcon(null);
         characterSelected = false;
         eliminatedCharacters.clear();
+        playerGuesses = 0;
 
         // Reinitialize player and AI character lists
         playerCharacters = new ArrayList<>(characters);

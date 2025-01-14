@@ -9,8 +9,9 @@
 import javax.sound.sampled.*;                 // Audio components
 import java.io.File;                          // File handling
 
-// CODED BY: PONNAVADDN & APRIL  
+// CODED BY: PONNAVADDN
 
+// This class handles sounds 
 public class Music {
     private Clip clip; // Sound effects 
     private Clip backgroundClip; // Background music 
@@ -23,7 +24,10 @@ public class Music {
     }
 
     // Link to how to play audio: https://www.geeksforgeeks.org/play-audio-file-using-java/ and https://www.baeldung.com/java-play-sound
-    // Method to play background music
+    /*
+     * Method to play background music
+     * @param file path of the music file 
+     */
     public void backgroundMusic(String filePath) {
         try {
             // if music is already playing, exit 
@@ -49,23 +53,27 @@ public class Music {
         }
     }
 
-     // Method to stop the background music
-        public void stopMusic() {
-            if (backgroundClip != null && backgroundClip.isRunning()) { // Check if the music is running 
-                backgroundClip.stop(); // Stop the clip
-                isPlaying = false; // Update state
-            }
+    // Method to stop the background music
+    public void stopMusic() {
+        if (backgroundClip != null && backgroundClip.isRunning()) { // Check if the music is running 
+            backgroundClip.stop(); // Stop the clip
+            isPlaying = false; // Update state
         }
+    }
 
-        // Method to toggle music
-        public void toggleMusic() {
-            if (isPlaying) {
-                stopMusic(); // Stop music if its currently playing 
-            } else {
-                backgroundMusic("backgroundMusic.wav"); // Start playing music if it's not already playing 
-            }
+    // Method to toggle music
+    public void toggleMusic() {
+        if (isPlaying) {
+            stopMusic(); // Stop music if its currently playing 
+        } else {
+            backgroundMusic("backgroundMusic.wav"); // Start playing music if it's not already playing 
         }
+    }
 
+    /* 
+     * Mehthod for button click sound effect 
+     * @param file path of sound you want to play 
+    */
     public void buttonClick(String filePath) {
         try {
             // Load the sound file

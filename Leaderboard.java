@@ -17,8 +17,10 @@ import javax.swing.*;
 
 // CODED BY: JERRY
 
+// This class handles the leaderboard GUI and updating the leaderboard after each game 
 public class Leaderboard {
 
+    // Display leaderboard GUI 
     public static void displayLeaderboard() {
         // Create the frame
         JFrame frame = new JFrame("Leaderboard");
@@ -114,9 +116,7 @@ public class Leaderboard {
     // Maintain guesses in an ArrayList
     private static ArrayList<PlayerGuesses> guessesList = new ArrayList<>();
 
-    /**
-     * Loads guesses from a file using Scanner. If the file doesn't exist, do nothing.
-     */
+    // Loads guesses from a file using Scanner. If the file doesn't exist, do nothing.
     public static void loadGuesses() {
         guessesList.clear(); // Clear the list before loading 
         File file = new File(LEADERBOARD_FILE);
@@ -141,9 +141,7 @@ public class Leaderboard {
         }
     }
 
-    /**
-     * Saves guesses to a file using PrintWriter. Overwrites old data in the file.
-     */
+    // Saves guesses to a file using PrintWriter. Overwrites old data in the file.
     public static void saveGuesses() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(LEADERBOARD_FILE))) {
             for (PlayerGuesses playerGuesses : guessesList) {
@@ -154,29 +152,23 @@ public class Leaderboard {
         }
     }
 
-    /**
-     * Increment/decrement an existing player's guesses or create new if not found.
+    /*
+     * Updates the leaderboard by adding the players name and guesses 
+     *
+     * @param playerName The name of the player to update or add.
+     * @param newGuesses The number of guesses to record for the player.
      */
-    public static void updateGuesses(String playerName, int newGuesses) {
-        for (PlayerGuesses playerGuesses : guessesList) {
-            if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
-                // Replace the existing guesses if the new guesses are fewer
-                if (newGuesses < playerGuesses.getGuesses()) {
-                    playerGuesses.setGuesses(newGuesses);
-                    saveGuesses(); // Save updated guesses to file
-                }
-                return;
-            }
-        }
-
-        // Player not found, create a new entry
-        guessesList.add(new PlayerGuesses(playerName, newGuesses));
-        saveGuesses(); // Save new player data to file
+    public static void updateGuesses(String playerName, int guesses) {
+        guessesList.add(new PlayerGuesses(playerName, guesses)); // Add a new entry for the player with their guesses
+        saveGuesses(); // Save the updated leaderboard to the file
     }
 
-    /**
-     * Returns a specific player's guesses, or 0 if not found.
-     */
+    /*
+    * Retrieves the number of guesses for a specific player.
+    *
+    * @param playerName The name of the player whose guesses are to be retrieved.
+    * @return The number of guesses the player has made, or 0 if the player is not found.
+    */
     public static int getGuesses(String playerName) {
         for (PlayerGuesses playerGuesses : guessesList) {
             if (playerGuesses.getPlayerName().equalsIgnoreCase(playerName)) {
@@ -186,17 +178,14 @@ public class Leaderboard {
         return 0;
     }
 
-    /**
-     * Returns a sorted copy of the leaderboard in descending order by guesses.
-     * Uses a separate Comparator (GuessesComparator), not an inline compare method.
-     */
+    // Returns a sorted copy of the leaderboard in ascending order by guesses
     public static List<PlayerGuesses> getAllGuessesSorted() {
         List<PlayerGuesses> sortedList = new ArrayList<>(guessesList); // Create a copy of the guesses
 
-        // Bubble Sort Algorithm to sort in descending order
+        // Bubble Sort Algorithm to sort in ascending order
         for (int i = 0; i < sortedList.size() - 1; i++) {
             for (int j = 0; j < sortedList.size() - i - 1; j++) {
-                if (sortedList.get(j).getGuesses() < sortedList.get(j + 1).getGuesses()) {
+                if (sortedList.get(j).getGuesses() > sortedList.get(j + 1).getGuesses()) {
                     // Swap elements
                     PlayerGuesses temp = sortedList.get(j);
                     sortedList.set(j, sortedList.get(j + 1));
@@ -205,6 +194,6 @@ public class Leaderboard {
             }
         }
 
-        return sortedList; // Return sorted list 
+        return sortedList; // Return sorted list
     }
 }

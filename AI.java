@@ -11,6 +11,7 @@ import java.util.Random;
 
 // CODED BY: APRIL & PONNAVADDN
 
+// This class handles the AI's logic for removing and asking questions 
 public class AI {
 
    // Variables 
@@ -23,22 +24,26 @@ public class AI {
         this.aiQuestions = new ArrayList<>(aiQuestions); // Store questions
     }
 
-    // Method to randomly select a character
+    /*
+    * Randomly selects a character for the AI
+    *
+    * @param characters The list of available characters to choose from.
+    * @return A randomly selected character from the list.
+    */
     public Character aiCharacter(ArrayList<Character> characters) {
         int index = random.nextInt(characters.size()); // Random index
         return characters.get(index); // Return the selected character
     }
 
-    // Method to select the AI Questions
+    /*
+    * Selects the next question for the AI to ask, considering the remaining characters and filtering out redundant or invalid questions.
+    *
+    * @param aiCharacters The list of characters still in consideration by the AI.
+    * @param lastQuestion The last question asked by the AI.
+    * @param answer The player's answer (true for "yes," false for "no") to the last question.
+    * @return A random next question for the AI to ask out of the remaining questions list, or null if no valid questions remain.
+    */
     public Question selectQuestion(ArrayList<Character> aiCharacters, Question lastQuestion, boolean answer) {
-        // DEBUG - print 
-        System.out.println("Current questions:");
-        for (int i = 0; i < aiQuestions.size(); i++) {
-            System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
-        }
-        System.out.println();
-        
-
         // Select random first question 
         if (isFirstQuestion) {
             isFirstQuestion = false; // Mark first question as used
@@ -73,19 +78,7 @@ public class AI {
             toRemove.add(q); // Mark question for removal
         }
         }
-         
-        // DEBUG: Print Remaining Questions**
-        System.out.println("removed based on attribute values:");
-        for (int i = 0; i < toRemove.size(); i++) {
-            System.out.println(toRemove.get(i).getQuestion()); // Print each question
-        }
-        System.out.println("Questions left based on attribute values:");
-        for (int i = 0; i < aiQuestions.size(); i++) {
-            System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
-        }
-        System.out.println();
         
-
         // Case 2: Remove redundant questions based on answer to questions  
             // E.g. If AI asks "Does your character have blue eyes?", if YES => remove all eye questions, if NO => remove only blue eyes quetion
         for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
@@ -117,20 +110,8 @@ public class AI {
                 }
             }
         }
-
-        // DEBUG: Print Remaining Questions
-        System.out.println("Removed based on answer:");
-        for (int i = 0; i < toRemove.size(); i++) {
-            System.out.println(toRemove.get(i).getQuestion()); // Print each question
-        }
-
-        System.out.println("questions left based on answer:");
-        for (int i = 0; i < aiQuestions.size(); i++) {
-            System.out.println(aiQuestions.get(i).getQuestion()); // Print each question
-        }
-        System.out.println();
         
-        // Case 3: Remove Questions if all characters have the same attribute value (This covers very few specific cases)
+        // Case 3: Remove Questions if all characters have the same attribute value (This covers very few specific cases, but still needed)
             // E.g. if only male characters remain, remove male characters question 
         for (int i = 0; i < aiQuestions.size(); i++) { // Loop through all questions 
             Question q = aiQuestions.get(i); // Get question 
@@ -196,18 +177,17 @@ public class AI {
             }
         }
 
-        // DEBUG: Print Questions After New Case
-        System.out.println("Removed based on same attribute values:");
+        // DEBUG: Print Questions After Elimination 
+        System.out.println("Removed questions for AI:");
         for (int i = 0; i < toRemove.size(); i++) {
             System.out.println(toRemove.get(i).getQuestion());
         }
-        System.out.println("Questions left based on same attribute values:");
+        System.out.println("Questions left for AI:");
         for (int i = 0; i < aiQuestions.size(); i++) {
             System.out.println(aiQuestions.get(i).getQuestion());
         }
         System.out.println();
         
-
         // Remove all questions marked for deletion from AI Questions list 
         aiQuestions.removeAll(toRemove);
 
@@ -222,7 +202,13 @@ public class AI {
         return null; // Return null if no valid questions remain (this should never exeucte)
     }
     
-    // Helper Method: this method checks if a given character matches the attribute and value specified in a question
+    /*
+    * Checks if a given character matches the attribute and value specified in a question.
+    *
+    * @param c The character to check.
+    * @param q The question containing the attribute and value to match.
+    * @return True if the character matches the specified attribute and value, otherwise false.
+    */
     private boolean matchesAttribute(Character c, Question q) {
         // If the question is about gender... 
             // The same follows for all other attributes  
@@ -249,7 +235,3 @@ public class AI {
     } 
 
 }
-
-
-
-

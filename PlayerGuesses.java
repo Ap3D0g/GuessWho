@@ -8,6 +8,7 @@
    
 // CODED BY: JERRY 
 
+// This class helps track name and number of guesses used in the leaderboard 
 public class PlayerGuesses {
     private String playerName; // Player name 
     private int guesses; // Number of player guesses / questions asked 

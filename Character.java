@@ -7,7 +7,8 @@
  */
 
  // CODED BY: APRIL AND JERRY  
- 
+
+// This class is for all the characters in the game 
 public class Character {
     // Private Attributes
     private String name, gender, hairColour, eyeColour;

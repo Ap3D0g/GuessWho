@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 
 // CODED BY: APRIL   
 
+// This class handles the basic game functions 
 public class Gameboard {
     
     //Variables 
@@ -36,7 +37,13 @@ public class Gameboard {
         return isPlayerTurn;
     }
 
-    // End the Game / play again 
+    /*
+     * Void method that ends the game and the player can either restart, view the leaderboard, or exit the game.
+     *
+     * @param winner The winner of the game 
+     * @param ai The AI's selected character object, used to display the AI's character name if the player wins.
+     * @param selectedCharacter The player's selected character, used to display in the message if the AI wins.
+     */
     public void endGame(String winner, Character ai, String selectedCharacter) {
         gameOver = true; // Mark the game as over
         String winMessage = "";
@@ -95,13 +102,24 @@ public class Gameboard {
 
     }
 
-    // Check Win Condition
+    /*
+     * Checks if the win condition is met and retrieves the player's/AI's chosen character
+     * 
+     * @param characters The list of characters to check for the win condition
+     * @return returns true if there is only one character remaining in the list, indicating the win condition is met, else return false
+     */
     public boolean checkWinCondition(ArrayList<Character> characters) {
         return characters.size() == 1; // True if only 1 character remains
     }
 
-    // Method to get the chosen character's attributes (so that you can compare attributes with questions asked)
-        //the chosen character is orignally stored in a String and this method returns its matching Character object 
+    /*
+     * Retrieves the `Character` object that matches the given name from a list of characters.
+     * This is needed so that you can compare attributes with questions asked 
+     *
+     * @param characters The list of `Character` objects to search through.
+     * @param selectedName The name of the character to find
+     * @return The `Character` object that matches the `selectedName`, or `null` if no match is found.
+     */
     public static Character chosenCharacter(ArrayList<Character> characters, String selectedName) {
         // Loop through all characters using a counted for loop
         for (int i = 0; i < characters.size(); i++) { 
@@ -115,6 +133,15 @@ public class Gameboard {
         return null; // Return null if no match is found
     } 
 
+    /*
+     * Filters a list of characters based on a specified attribute and value.
+     *
+     * @param characters The list of `Character` objects to be filtered.
+     * @param attribute  The attribute to check (e.g., "gender", "hair", "eye").
+     * @param value      The value of the attribute to match (e.g., "male", "blonde", "blue").
+     * @param matches    A boolean indicating whether to keep characters that match (`true`) or don't match (`false`) the criteria.
+     * @return A filtered `ArrayList<Character>` containing only the characters that are left after elimination 
+     */
     // Method to remove characters depending on the question asked and the characteristics of character chosen 
     public static ArrayList<Character> removeCharacter(ArrayList<Character> characters, String attribute, String value, boolean matches) {
         // Create a temporary list to store characters to remove
@@ -159,9 +186,3 @@ public class Gameboard {
     }
 
 }
-
-
-
-
-
-
