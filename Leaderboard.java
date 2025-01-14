@@ -20,6 +20,12 @@ import javax.swing.*;
 // This class handles the leaderboard GUI and updating the leaderboard after each game 
 public class Leaderboard {
 
+    // File to store all leaderboard data 
+    private static final String LEADERBOARD_FILE = "leaderboard.txt";
+    
+    // Maintain guesses in an ArrayList
+    private static ArrayList<PlayerGuesses> guessesList = new ArrayList<>();
+
     // Display leaderboard GUI 
     public static void displayLeaderboard() {
         // Create the frame
@@ -109,12 +115,6 @@ public class Leaderboard {
         frame.setVisible(true);
 
     }
-    
-    // File to store all leaderboard data 
-    private static final String LEADERBOARD_FILE = "leaderboard.txt";
-    
-    // Maintain guesses in an ArrayList
-    private static ArrayList<PlayerGuesses> guessesList = new ArrayList<>();
 
     // Loads guesses from a file using Scanner. If the file doesn't exist, do nothing.
     public static void loadGuesses() {

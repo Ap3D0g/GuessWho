@@ -45,6 +45,8 @@ public class GUI {
     private boolean isDarkTheme = false; // Sets initial theme to light 
     private int playerGuesses = 0; // Tracks the number of questions asked by the player
     private String username;
+    private ArrayList<Question> originalQuestions; // Original list of questions (used when resetting game in the middle)
+    private ArrayList<Question> originalGuessQuestions; // Original list of guess questions (used when resetting game in the middle)
 
     // GUI components 
     private JFrame boardFrame; 
@@ -71,6 +73,8 @@ public class GUI {
         this.characters = characters;
         this.questions = questions;
         this.guessQuestions = guessQuestions;
+        this.originalQuestions = new ArrayList<>(questions); // Create a copy of the questions for the game (if you reset in the middle of the game)
+        this.originalGuessQuestions = new ArrayList<>(guessQuestions); // Create a copy of the character questions for the game (if you reset in the middle of the game)
         this.aiInstance = new AI(new ArrayList<>(aiQuestions)); // Create AI instance with a separate copy of AI questions
         this.music = music;
         
@@ -663,8 +667,12 @@ public class GUI {
         playerCharacters = new ArrayList<>(characters);
         aiCharacters = new ArrayList<>(characters);
 
+        // Reset player questions 
+        questions = new ArrayList<>(originalQuestions);
+        guessQuestions = new ArrayList<>(originalGuessQuestions);
+
         // Reset AI questions
-        aiInstance = new AI(new ArrayList<>(questions));
+        aiInstance = new AI(new ArrayList<>(originalQuestions));
 
         // Recreate the gameboard
         gameboard = new Gameboard();
@@ -687,6 +695,7 @@ public class GUI {
         JDialog settingsDialog = new JDialog(boardFrame, "Settings", true);
         settingsDialog.setSize(300,200);
         settingsDialog.setLayout(new BorderLayout());
+        settingsDialog.setResizable(false);
 
         // Title label for settings 
         JLabel settingsLabel = new JLabel("Settings", JLabel.CENTER);
@@ -749,6 +758,12 @@ public class GUI {
         musicToggle.addActionListener(e -> {
             music.buttonClick("buttonClick.wav"); // Button sound 
             music.toggleMusic(); // Toggle music 
+            // Update the button text based on the current state
+            if (musicToggle.isSelected()) {
+                musicToggle.setText("Toggle Music Off"); // Show "Off" when music is playing
+            } else {
+                musicToggle.setText("Toggle Music On"); // Show "On" when music is stopped
+            }
         });
 
         settingsDialog.setVisible(true);
@@ -788,9 +803,9 @@ public class GUI {
         // Update settings icon theme
         String iconPath;
         if(isDarkTheme){
-            iconPath = "ButtonIcons/blackSettingIcon.png"; // Dark theme settings icon
+            iconPath = "ButtonIcons/whiteSettingIcon(1).PNG"; // Light theme settings icon
         }else{
-            iconPath = "ButtonIcons/whiteSettingIcon.png"; // Light theme settings icon
+            iconPath = "ButtonIcons/blackSettingIcon.png"; // Dark theme settings icon
         }
 
         // Resize the icon and set it to the settings button

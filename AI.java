@@ -176,20 +176,16 @@ public class AI {
                 toRemove.add(q);
             }
         }
+        
+        // Remove all questions marked for deletion from AI Questions list 
+        aiQuestions.removeAll(toRemove);
 
         // DEBUG: Print Questions After Elimination 
-        System.out.println("Removed questions for AI:");
-        for (int i = 0; i < toRemove.size(); i++) {
-            System.out.println(toRemove.get(i).getQuestion());
-        }
-        System.out.println("Questions left for AI:");
+        System.out.println("Questions remaining for AI:");
         for (int i = 0; i < aiQuestions.size(); i++) {
             System.out.println(aiQuestions.get(i).getQuestion());
         }
         System.out.println();
-        
-        // Remove all questions marked for deletion from AI Questions list 
-        aiQuestions.removeAll(toRemove);
 
         // Pick the Next Question Randomly
         if (!aiQuestions.isEmpty()) {
