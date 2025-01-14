@@ -803,7 +803,7 @@ public class GUI {
         // Update settings icon theme
         String iconPath;
         if(isDarkTheme){
-            iconPath = "ButtonIcons/whiteSettingIcon(1).PNG"; // Light theme settings icon
+            iconPath = "ButtonIcons/whiteSettingIcon.png"; // Light theme settings icon
         }else{
             iconPath = "ButtonIcons/blackSettingIcon.png"; // Dark theme settings icon
         }
