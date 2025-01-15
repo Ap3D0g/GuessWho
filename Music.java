@@ -6,8 +6,8 @@
  * Assignemnt: Guess who ISP - Music class  
  */
 
-import javax.sound.sampled.*;                 // Audio components
-import java.io.File;                          // File handling
+import javax.sound.sampled.*; // Audio components
+import java.io.File; // File handling
 
 // CODED BY: PONNAVADDN
 

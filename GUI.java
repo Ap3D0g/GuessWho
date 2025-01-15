@@ -258,10 +258,10 @@ public class GUI {
                     // Display the selected character's image on the right panel
                     ImageIcon selectedIcon = new ImageIcon("Characters/" + name + ".png");
                     Image selectedImg = selectedIcon.getImage().getScaledInstance(200, 250, Image.SCALE_SMOOTH); 
-                    turn = new JLabel("Your Turn");
+                    turn = new JLabel("Your Turn", JLabel.CENTER);
                     turn.setForeground(new Color(255, 210, 8));
                     turn.setFont(new Font("Futura", Font.BOLD, 45));
-                    score = new JLabel(" Guesses: " + Integer.toString(playerGuesses));
+                    score = new JLabel(" Guesses: " + Integer.toString(playerGuesses), JLabel.CENTER);
                     score.setForeground(new Color(255, 210, 8));
                     score.setFont(new Font("Futura", Font.BOLD, 45));
                     sidePanel.add(turn, BorderLayout.NORTH);
@@ -297,6 +297,8 @@ public class GUI {
         // Add grid panel to the board frame
         boardFrame.add(gridPanel, BorderLayout.CENTER);
         
+        // CODED BY: JERRY 
+
         // Dropdown for Questions
         bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(66, 121, 161));
@@ -494,6 +496,7 @@ public class GUI {
 
     }
 
+    // CODED BY: APRIL 
     // AI Turn
     private void aiTurn() {
         if (!gameboard.isPlayerTurn()) { // AI's turn
@@ -614,6 +617,7 @@ public class GUI {
         return false;
     }   
 
+    // CODED BY: JERRY
     // Remove questions player already asked in dropdown 
     private void updateDropdown() {
         questionDropdown.removeAllItems(); // Clear dropdown
@@ -651,9 +655,9 @@ public class GUI {
             }
         }
     }
-
+    
     // CODED BY: PONNAVADDN 
-
+    
     // Restart the game in the middle of a current game
     private void resetGame(){
         // Reset game variables
