@@ -297,7 +297,7 @@ public class GUI {
         // Add grid panel to the board frame
         boardFrame.add(gridPanel, BorderLayout.CENTER);
         
-        // CODED BY: JERRY 
+        // CODED BY: LUCAS 
 
         // Dropdown for Questions
         bottomPanel = new JPanel();
@@ -324,6 +324,8 @@ public class GUI {
         askPanel.add(questionLabel);
         askPanel.add(questionDropdown);
         askPanel.add(askButton);
+
+        // CODED BY: JERRY 
 
         // Dropdown for guessing characters
         guessPanel = new JPanel();
@@ -639,6 +641,8 @@ public class GUI {
         }
     }
 
+    // CODED BY: LUCAS 
+    
     // Updates eliminated character buttons with new icons 
     private void updateEliminatedCharacterButtons() {
         for (int i = 0; i < characterNames.length; i++) { // Loop through all characters 
@@ -657,7 +661,7 @@ public class GUI {
     }
     
     // CODED BY: PONNAVADDN 
-    
+
     // Restart the game in the middle of a current game
     private void resetGame(){
         // Reset game variables

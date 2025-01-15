@@ -6,9 +6,7 @@
  * Assignemnt: Guess who ISP - Main class
  */
 
-import java.util.ArrayList;
-
-// CODED BY: APRIL  
+import java.util.ArrayList; 
 
 // This is the main class that instatiates everything and runs the code
 public class Main {
@@ -19,6 +17,7 @@ public class Main {
     public static ArrayList<Question> guessQuestions = new ArrayList<>();
     public static Music music; 
 
+    // CODED BY: APRIL 
     public static void main(String[] args) {
         // Initialize characters and questions
         initializeCharacters(); 
@@ -90,6 +89,7 @@ public class Main {
         aiQuestions = new ArrayList<>(questions); // Make a copy of player questions for AI
     }
     
+    // CODED BY: LUCAS 
     // Initialize guess questions
     public static void initializeGuessQuestions() {
         guessQuestions.clear(); // Clear any existing data (important for restarting)
