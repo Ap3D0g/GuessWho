@@ -92,7 +92,7 @@ public class Leaderboard {
             leaderboardPanel.add(Box.createVerticalStrut(10)); // Add spacing between entries
         }
 
-        // Add leaderboard panel to a scroll pane in case the list is long
+        // Add leaderboard panel to a scroll pane just in case the list is long
         JScrollPane scrollPane = new JScrollPane(leaderboardPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         frame.add(scrollPane, BorderLayout.CENTER);
@@ -116,18 +116,17 @@ public class Leaderboard {
 
     }
 
-    // Loads guesses from a file using Scanner. If the file doesn't exist, do nothing.
+    // Loads guesses from a file using Scanner
     public static void loadGuesses() {
         guessesList.clear(); // Clear the list before loading 
         File file = new File(LEADERBOARD_FILE);
-        if (!file.exists()) { // Exit method if file doens't exist 
+        if (!file.exists()) { // If file doesn't exist, do nothing
             return;
         }
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine().trim(); // Read and trim each line
                 if (!line.isEmpty()) {
-                    // Expecting "PlayerName Guesses"
                     String[] parts = line.split("\\s+"); // Split line into player name and guesses
                     if (parts.length == 2) {
                         String playerName = parts[0];
@@ -136,18 +135,18 @@ public class Leaderboard {
                     }
                 }
             }
-        } catch (Exception e) {  // Catch-all
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Saves guesses to a file using PrintWriter. Overwrites old data in the file.
+    // Saves guesses to a file using PrintWriter and overwrites old data in the file
     public static void saveGuesses() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(LEADERBOARD_FILE))) {
             for (PlayerGuesses playerGuesses : guessesList) {
                 writer.println(playerGuesses.getPlayerName() + " " + playerGuesses.getGuesses()); // Write name and guesses
             }
-        } catch (Exception e) {  // Catch-all
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
